@@ -1,0 +1,46 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist",
+    "target": "ESNext",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "incremental": true,
+    "declaration": true,
+    "sourceMap": true,
+    "allowJs": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "jsx": "preserve",
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "paths": {
+      "@src/*": ["src/*"],
+      "@common/*": ["src/common/*"],
+      "@entity": ["src/common/entity"],
+      "@logger": ["src/common/logger/logger"],
+      "@util": ["src/common/util"],
+      "@config/*": ["src/config/*"],
+      "@frontend/*": ["src/frontend/src/*"],
+      "@backend/*": ["src/backend/*"],
+      "@db/*": ["src/backend/db/*"],
+      "@db": ["src/backend/db/DB"],
+      "@repository": ["src/backend/db/repository"],
+      "@action": ["src/backend/action"]
+    }
+  },
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "src"
+  ]
+}

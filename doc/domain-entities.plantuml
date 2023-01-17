@@ -1,0 +1,83 @@
+@startuml
+
+' hide "E" circle
+hide circle
+
+''' Domain Entities Diagram
+
+entity SystemProperty {
+  systemPropertyKey: string
+  --
+  systemPropertyValue: string
+}
+'' note bottom of SystemProperty
+''   plural: SystemProperties
+'' end note
+
+package telegram {
+  entity TelegramUser {
+    id: string
+    --
+    username?: string
+    firstName?: string
+    lastName?: string
+    languageCode?: string
+    createdAt: date
+  }
+}
+
+package vpnbot {
+
+  entity VpnBotUser {
+    telegramUserId: TelegramUser
+    --
+    role: Role
+
+    userSubscription?: Subscription
+    userSubscriptionHistory?: SubscriptionHistory
+
+    createdAt: date
+  }
+
+  note left of VpnBotUser::role
+    type Role =
+      | 'admin'
+      | 'user'
+      | 'support'
+  end note
+
+  note left of VpnBotUser::userSubscription
+    type Subscription =
+      | NoneSubscription
+      | Tier1Subscription
+      | Tier2Subscription
+
+    type NoneSubscription = {
+      tpe: 'NoneSubscription'
+    }
+
+    type Tier1Subscription = {
+      tpe: 'Tier1Subscription'
+    }
+
+    type Tier2Subscription = {
+      tpe: 'Tier1Subscription'
+    }
+  end note
+
+  note left of VpnBotUser::userSubscriptionHistory
+    type SubscriptionHistory = {
+      entries: SubscriptionHistoryEntry[]
+    }
+
+    type SubscriptionHistoryEntry = {
+      subscription: Subscription
+      timestamp: Date
+    }
+  end note
+
+  VpnBotUser |o..|| TelegramUser
+
+}
+
+@enduml
