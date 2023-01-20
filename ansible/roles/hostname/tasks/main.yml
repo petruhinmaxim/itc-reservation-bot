@@ -1,0 +1,33 @@
+---
+- name: Set a hostname
+  ansible.builtin.hostname:
+    name: "{{ inventory_hostname }}"
+  tags: set-hostname
+
+- name: "Generate /etc/hosts.ansible file"
+  template: "src=hosts.j2 dest='/etc/hosts.ansible' owner=root group=root mode=0644"
+  tags: set-hostname
+  become: true
+
+- name: "Check if debian generated hosts file has a backup"
+  stat: "path=/etc/hosts.debian"
+  tags: set-hostname
+  register: etc_hosts_debian
+
+- name: "Backup debian generated /etc/hosts"
+  command: "cp /etc/hosts /etc/hosts.debian"
+  when: etc_hosts_debian.stat.islnk is not defined
+  tags: set-hostname
+  become: true
+
+- name: "Install /etc/hosts.ansible file"
+  command: "cp /etc/hosts.ansible /etc/hosts"
+  tags: set-hostname
+  become: true
+
+# Что здесь происходит?
+# 1. Устанавливается имя хоста через ansible.builtin.hostname
+# 2. Шаблон hosts.j2 актуализируется и копируется на хост /etc/hosts.ansible
+# 2. Бэкапится файл /etc/hosts как /etc/hosts.debian, если необходимо
+# 3. Файл /etc/hosts.ansible становится /etc/hosts
+

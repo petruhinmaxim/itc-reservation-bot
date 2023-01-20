@@ -1,0 +1,8 @@
+batyacorp:
+  hosts:
+    serik236:
+      ansible_host: 185.192.97.236
+    vartan245:
+      ansible_host: 185.192.97.245
+  vars:
+    ansible_user: root

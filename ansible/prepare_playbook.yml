@@ -1,0 +1,11 @@
+---
+- hosts: "{{ target }}"
+  user: "{{ ansible_user }}"
+  become: true
+
+  roles:
+    - hostname
+      # - common
+      # - docker
+      # - security
+      # - cleanup
