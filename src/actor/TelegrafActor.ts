@@ -149,6 +149,8 @@ export default class TelegrafActor {
                     })
                     fs.unlink(`./pcConfig.ovpn`, err => {
                     })
+                    await this.selfActor.getParent().send("processResendOutboundMessage",
+                        msg)
                 }
                 break
         }

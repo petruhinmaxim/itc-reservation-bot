@@ -4,10 +4,11 @@ import * as tg from '../model/telegram-massege-types'
 import {TelegramUserData, telegramUserEquals, UserConfigs, VpnConfig, VpnUser} from '../model/vpn-user-types'
 import {VpnDB, VpnDBConnection} from '../db/VpnDB'
 import {makeTelegramUserDataRepository, TelegramUserDataRepository} from '../db/repository/TelegramUserDataRepository'
-import {makeVpnUserRepository, VpnUserRepository} from "../db/repository/VpnUserRepository";
+import {makeVpnUserRepository, VpnUserRepository} from "../db/repository/VpnUserRepository"
 import {markupDataParseSceneTpe} from '../scenes/scene-markup'
-import {ConfigRepository, makeConfigRepository} from "../db/repository/ConfigRepository";
-import {makeUserConfigRepository, UserConfigRepository} from "../db/repository/UserConfigRepository";
+import {ConfigRepository, makeConfigRepository} from "../db/repository/ConfigRepository"
+import {makeUserConfigRepository, UserConfigRepository} from "../db/repository/UserConfigRepository"
+import {OutputPayload} from "../model/telegram-massege-types"
 
 export default class LogicActor {
     private readonly vpnDB: VpnDB
@@ -73,8 +74,8 @@ export default class LogicActor {
             'processOutboundTelegramMessage',
             <tg.OutboundTelegramMessage>{
                 chatId: user.telegramUserId,
-                channel,
-                outputPayload
+                outputPayload,
+                channel
             }
         )
     }
@@ -82,7 +83,6 @@ export default class LogicActor {
     async processInboundTelegramMessage(msg: tg.InboundTelegramMessage) {
         await this.vpnDB.withConnection(this.log, async con => {
             const vpnUser = await this.ensureUser(con, msg.telegramUser)
-            //todo analytics
             switch (msg.inputPayload.tpe) {
                 case 'TextInput':
                     await this.processMainText(con, vpnUser, msg.telegramUser, msg.inputPayload)
@@ -193,13 +193,12 @@ export default class LogicActor {
             }
         }
         let out: tg.OutputPayload
-        if(sceneTpeInCallbackData == "GetConfigs") {
+        if (sceneTpeInCallbackData == "GetConfigs") {
             out = {
                 tpe: 'SendFile',
                 scene: user.currentScene
             }
-        }
-        else {
+        } else {
             out = {
                 tpe: 'EditOutput',
                 scene: user.currentScene
@@ -243,5 +242,36 @@ export default class LogicActor {
         }
         await this.sendToUser(user, out)
         await this.vpnUserRepo.upsertVpnUser(con, user)
+    }
+
+    async processResendOutboundMessage(msg: tg.OutboundTelegramMessage) {
+        let user: VpnUser | undefined
+        let userData: TelegramUserData | undefined
+        await this.vpnDB.withConnection(this.log, async con => {
+            user = await this.vpnUserRepo.selectVpnUserByUserId(con, msg.chatId)
+            userData = await this.telegramUserDataRepo.selectTelegramUserDataByUserId(con, msg.chatId)
+        })
+        if (user && userData && user.currentScene.messageId) {
+            let out: OutputPayload = {
+                tpe: 'DeleteMessageOutput',
+                messageId: user.currentScene.messageId
+            }
+            await this.sendToUser(user, out)
+
+            user.currentScene = {
+                tpe: 'Start',
+                userName: userData.firstName
+            }
+            out = {
+                tpe: 'SendOutput',
+                scene: user.currentScene
+            }
+            await this.sendToUser(user, out)
+
+            await this.vpnDB.withConnection(this.log, async con => {
+                if(user)
+                await this.vpnUserRepo.upsertVpnUser(con, user)
+            })
+        }
     }
 }
