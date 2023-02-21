@@ -1,1 +1,1 @@
-# vpn-bot
+# vpn_telegram-bot

@@ -1,46 +1,13 @@
 {
   "compilerOptions": {
-    "outDir": "./dist",
-    "target": "ESNext",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "target": "es2017",
     "module": "commonjs",
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "incremental": true,
     "declaration": true,
     "sourceMap": true,
+    "outDir": "dist",
+    "rootDir": "src",
     "allowJs": true,
     "strict": true,
-    "skipLibCheck": true,
-    "baseUrl": ".",
-    "jsx": "preserve",
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "paths": {
-      "@src/*": ["src/*"],
-      "@common/*": ["src/common/*"],
-      "@entity": ["src/common/entity"],
-      "@logger": ["src/common/logger/logger"],
-      "@util": ["src/common/util"],
-      "@config/*": ["src/config/*"],
-      "@frontend/*": ["src/frontend/src/*"],
-      "@backend/*": ["src/backend/*"],
-      "@db/*": ["src/backend/db/*"],
-      "@db": ["src/backend/db/DB"],
-      "@repository": ["src/backend/db/repository"],
-      "@action": ["src/backend/action"]
-    }
-  },
-  "exclude": [
-    "node_modules"
-  ],
-  "include": [
-    "src"
-  ]
+    "esModuleInterop": true
+  }
 }
