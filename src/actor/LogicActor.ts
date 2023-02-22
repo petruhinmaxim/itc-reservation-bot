@@ -295,12 +295,11 @@ export default class LogicActor {
                 tpe: 'SendOutput',
                 scene: user.currentScene
             }
-            await this.sendToUser(user, out)
-
             await this.vpnDB.withConnection(this.log, async con => {
                 if (user)
                     await this.vpnUserRepo.upsertVpnUser(con, user)
             })
+            await this.sendToUser(user, out)
         }
     }
 }

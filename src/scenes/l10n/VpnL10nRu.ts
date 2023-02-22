@@ -9,31 +9,46 @@ export class VpnL10nRu implements VpnL10n {
         if (!userName) {
             userName = 'Симпотяга'
         }
-        return escapeString( `Привет, ${userName}.\n` +
+        return  `Привет, ${userName}.\n` +
             'Я помогу тебе настроить VPN на твоем устройстве.\n' +
-            'Для этого просто скачай конфиги, нажав на кнопку ниже, и переходи к соответствующей инструкции.\n' +
+            `Для этого просто скачай конфиги, нажав на кнопку ниже, и переходи к соответствующей инструкции.\n` +
             'Не забудь ознакомиться с дополнительной информацией.'
-        )
     }
 
     iphoneInstruction(scene: s.IphoneInstruction): string {
-        return escapeString('Тут инструкция для айфон' )
+        return 'Для настройки VPN на Iphone следуйте инструкции:\n' +
+            "1) Скачайте и установите клиент OpenVPN. [Ссылка для скачивания](https://apps.apple.com/ru/app/openvpn-connect/id590379981)\n" +
+            '2) Откройте загруженный ранее конфиг с помощью программы OpenVPN \n' +
+            '3) Активируйте в программе конфиг бла бла бла.... \n' +
+            'Теперь вы сможете включать VPN в настройках одним кликом'
     }
 
     macInstruction(scene: s.MacInstruction): string {
-        return escapeString('Тут инструкция для mac' )
+        return 'Для настройки VPN на Iphone следуйте инструкции:\n' +
+            "1) Скачайте и установите клиент OpenVPN. [Ссылка для скачивания](https://apps.apple.com/ru/app/openvpn-connect/id590379981)\n" +
+            '2) Откройте загруженный ранее конфиг с помощью программы OpenVPN \n' +
+            '3) Активируйте в программе конфиг бла бла бла.... \n' +
+            'Теперь вы сможете включать VPN в настройках одним кликом'
     }
 
     androidInstruction(scene: s.AndroidInstruction): string {
-        return escapeString('Тут инструкция для android' )
+        return 'Для настройки VPN на Iphone следуйте инструкции:\n' +
+            "1) Скачайте и установите клиент OpenVPN. [Ссылка для скачивания](https://apps.apple.com/ru/app/openvpn-connect/id590379981)\n" +
+            '2) Откройте загруженный ранее конфиг с помощью программы OpenVPN \n' +
+            '3) Активируйте в программе конфиг бла бла бла.... \n' +
+            'Теперь вы сможете включать VPN в настройках одним кликом'
     }
 
     windowsInstruction(scene: s.WindowsInstruction): string {
-        return escapeString('Тут инструкция для windows' )
+        return 'Для настройки VPN на Iphone следуйте инструкции:\n' +
+            "1) Скачайте и установите клиент OpenVPN. [Ссылка для скачивания](https://apps.apple.com/ru/app/openvpn-connect/id590379981)\n" +
+            '2) Откройте загруженный ранее конфиг с помощью программы OpenVPN \n' +
+            '3) Активируйте в программе конфиг бла бла бла.... \n' +
+            'Теперь вы сможете включать VPN в настройках одним кликом'
     }
 
     generalInfo(scene: s.GeneralInfo): string {
-        return escapeString('Технические характеристики. Немного о проекте. Контакты. Выделенный сервер' )
+        return 'Технические характеристики. Немного о проекте. Контакты. Выделенный сервер'
     }
 
     //navigation

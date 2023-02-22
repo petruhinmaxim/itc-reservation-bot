@@ -93,17 +93,18 @@ export default class TelegrafActor {
                 const text = l10n.getText(scene)
                 const messageId = await this.telegraf.telegram.sendMessage(msg.chatId, text, {
                     ...mrk.getMarkup(scene, l10n),
-                    disable_web_page_preview: false,
-                    parse_mode: 'MarkdownV2'
+                    disable_web_page_preview: true,
+                    parse_mode: 'Markdown',
+                    disable_notification: true
                 })
                 msg.outputPayload.scene.messageId = messageId.message_id
-                break
             }
+                break
 
             case 'DeleteMessageOutput': {
                 await this.telegraf.telegram.deleteMessage(msg.chatId, msg.outputPayload.messageId)
-                break
             }
+                break
 
             case 'EditOutput': {
                 let l10n = this.l10n(msg.userData);
@@ -113,16 +114,20 @@ export default class TelegrafActor {
                 await this.telegraf.telegram.editMessageText(
                     msg.chatId, messageId, undefined, text, {
                         ...mrk.getMarkup(scene, l10n),
-                        disable_web_page_preview: false,
-                        parse_mode: 'MarkdownV2'
+                        disable_web_page_preview: true,
+                        parse_mode: 'Markdown'
                     })
-                break
             }
+                break
 
             case 'TextOutput':
                 await this.telegraf.telegram.sendMessage(
                     msg.chatId,
-                    msg.outputPayload.text
+                    msg.outputPayload.text, {
+                        disable_web_page_preview: true,
+                        parse_mode: 'Markdown',
+                        disable_notification: true
+                    }
                 )
                 break
 
@@ -136,13 +141,15 @@ export default class TelegrafActor {
                         msg.chatId, {
                             filename: `mobileConfig.ovpn`,
                             source: `./mobileConfig${msg.chatId}.ovpn`
-                        }
+                        } ,
+                        { disable_notification: true }
                     )
                     await this.telegraf.telegram.sendDocument(
                         msg.chatId, {
                             filename: `pcConfig.ovpn`,
                             source: `./pcConfig${msg.chatId}.ovpn`
-                        }
+                        },
+                        { disable_notification: true }
                     )
                     fs.unlink(`./mobileConfig${msg.chatId}.ovpn`, err => {
                     })
@@ -158,7 +165,7 @@ export default class TelegrafActor {
                     await this.telegraf.telegram.sendDocument(
                         msg.chatId, {
                             filename: msg.outputPayload.scene.filename,
-                            source: msg.outputPayload.scene.source
+                            source: msg.outputPayload.scene.source,
                         }
                     )
                     await this.selfActor.getParent().send("processResendOutboundMessage",
