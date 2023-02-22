@@ -113,29 +113,57 @@ export default class LogicActor {
             case 'IphoneInstruction': {
                 user.currentScene = {
                     tpe: "IphoneInstruction",
-                    messageId: payload.messageId
+                    messageId: payload.messageId,
+                    filename: "Iphone.gif",
+                    source: "media/instruction/iphone.gif"
                 }
+                let out: OutputPayload = {
+                    tpe: 'SendFile',
+                    scene: user.currentScene
+                }
+                await this.sendToUser(user, out)
                 break
             }
             case 'MacInstruction': {
                 user.currentScene = {
                     tpe: "MacInstruction",
-                    messageId: payload.messageId
+                    messageId: payload.messageId,
+                    filename: "Mac.gif",
+                    source: "media/instruction/mac.gif"
                 }
+                let out: OutputPayload = {
+                    tpe: 'SendFile',
+                    scene: user.currentScene
+                }
+                await this.sendToUser(user, out)
                 break
             }
             case 'AndroidInstruction': {
                 user.currentScene = {
                     tpe: "AndroidInstruction",
-                    messageId: payload.messageId
+                    messageId: payload.messageId,
+                    filename: "Android.gif",
+                    source: "media/instruction/android.gif"
                 }
+                let out: OutputPayload = {
+                    tpe: 'SendFile',
+                    scene: user.currentScene
+                }
+                await this.sendToUser(user, out)
                 break
             }
             case 'WindowsInstruction': {
                 user.currentScene = {
                     tpe: "WindowsInstruction",
-                    messageId: payload.messageId
+                    messageId: payload.messageId,
+                    filename: "Windows.gif",
+                    source: "media/instruction/windows.gif"
                 }
+                let out: OutputPayload = {
+                    tpe: 'SendFile',
+                    scene: user.currentScene
+                }
+                await this.sendToUser(user, out)
                 break
             }
             case 'GetConfigs': {
@@ -257,10 +285,11 @@ export default class LogicActor {
                 messageId: user.currentScene.messageId
             }
             await this.sendToUser(user, out)
-
-            user.currentScene = {
-                tpe: 'Start',
-                userName: userData.firstName
+            if (user.currentScene.tpe == "GetConfigs") {
+                user.currentScene = {
+                    tpe: "Start",
+                    userName: userData.firstName
+                }
             }
             out = {
                 tpe: 'SendOutput',
@@ -269,8 +298,8 @@ export default class LogicActor {
             await this.sendToUser(user, out)
 
             await this.vpnDB.withConnection(this.log, async con => {
-                if(user)
-                await this.vpnUserRepo.upsertVpnUser(con, user)
+                if (user)
+                    await this.vpnUserRepo.upsertVpnUser(con, user)
             })
         }
     }

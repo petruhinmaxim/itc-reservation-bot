@@ -97,7 +97,6 @@ export default class TelegrafActor {
                     parse_mode: 'MarkdownV2'
                 })
                 msg.outputPayload.scene.messageId = messageId.message_id
-                // await this.selfActor.getParent().send('processReturnOutboundWithMessageId', msg)
                 break
             }
 
@@ -131,24 +130,37 @@ export default class TelegrafActor {
                 if (msg.outputPayload.scene.tpe == "GetConfigs") {
                     const mobileConfigData = msg.outputPayload.scene.mobileConfigData
                     const pcConfigData = msg.outputPayload.scene.pcConfigData
-                    fs.writeFileSync('mobileConfig.ovpn', mobileConfigData)
-                    fs.writeFileSync('pcConfig.ovpn', pcConfigData)
+                    await fs.writeFileSync(`mobileConfig${msg.chatId}.ovpn`, mobileConfigData)
+                    await fs.writeFileSync(`pcConfig${msg.chatId}.ovpn`, pcConfigData)
                     await this.telegraf.telegram.sendDocument(
                         msg.chatId, {
-                            filename: "mobileConfig.ovpn",
-                            source: `./mobileConfig.ovpn`
+                            filename: `mobileConfig.ovpn`,
+                            source: `./mobileConfig${msg.chatId}.ovpn`
                         }
                     )
                     await this.telegraf.telegram.sendDocument(
                         msg.chatId, {
-                            filename: "pcConfig.ovpn",
-                            source: `./pcConfig.ovpn`
+                            filename: `pcConfig.ovpn`,
+                            source: `./pcConfig${msg.chatId}.ovpn`
                         }
                     )
-                    fs.unlink(`./mobileConfig.ovpn`, err => {
+                    fs.unlink(`./mobileConfig${msg.chatId}.ovpn`, err => {
                     })
-                    fs.unlink(`./pcConfig.ovpn`, err => {
+                    fs.unlink(`./pcConfig${msg.chatId}.ovpn`, err => {
                     })
+                    await this.selfActor.getParent().send("processResendOutboundMessage",
+                        msg)
+                }
+                const scene = msg.outputPayload.scene.tpe
+                if (scene == "IphoneInstruction" || scene == "MacInstruction" ||
+                    scene == "AndroidInstruction" || scene == "WindowsInstruction"
+                ) {
+                    await this.telegraf.telegram.sendDocument(
+                        msg.chatId, {
+                            filename: msg.outputPayload.scene.filename,
+                            source: msg.outputPayload.scene.source
+                        }
+                    )
                     await this.selfActor.getParent().send("processResendOutboundMessage",
                         msg)
                 }

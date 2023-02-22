@@ -16,21 +16,29 @@ export type DeleteMassage =  {
 export type IphoneInstruction =  {
   tpe: 'IphoneInstruction'
   messageId?: number
+  filename: string
+  source: string
 }
 
 export type MacInstruction =  {
   tpe: 'MacInstruction'
   messageId?: number
+  filename: string
+  source: string
 }
 
 export type AndroidInstruction =  {
   tpe: 'AndroidInstruction'
   messageId?: number
+  filename: string
+  source: string
 }
 
 export type WindowsInstruction =  {
   tpe: 'WindowsInstruction'
   messageId?: number
+  filename: string
+  source: string
 }
 
 export type GetConfigs =  {
