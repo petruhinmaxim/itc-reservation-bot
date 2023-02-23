@@ -109,7 +109,9 @@ namespace sql {
             `SELECT vpn_config.*
              FROM vpn_config
                       LEFT JOIN user_vpn_config uvc on vpn_config.config_id = uvc.mobile_config_id
-             WHERE telegram_user_id IS NULL
+                      LEFT JOIN user_vpn_config uvc2 on vpn_config.config_id = uvc2.pc_config_id
+             WHERE uvc.telegram_user_id IS NULL
+               AND uvc2.telegram_user_id IS NULL
              LIMIT 2
             `,
         )
