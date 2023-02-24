@@ -18,7 +18,7 @@ export class VpnL10nRu implements VpnL10n {
     iphoneInstruction(scene: s.IphoneInstruction): string {
         return `Сообщением выше отправлена видеоинструкция для настройки VPN на Iphone или воспользуйтесь текстовой:\n \n`  +
             "1) Скачайте и установите клиент OpenVPN из AppStore. [Ссылка для скачивания](https://apps.apple.com/ru/app/openvpn-connect/id590379981)\n \n" +
-            `2) В Telegram нажмите на отправленный ранее файл "mobilecontig.ovpn" => Выберите "Сохранить в файлы" => Нажмите "Сохранить" \n \n` +
+            `2) В Telegram нажмите на скаченный ранее файл "mobilecontig.ovpn" => Выберите "Сохранить в файлы" => Нажмите "Сохранить" \n \n` +
             `3) Откройте приложение "Файлы" => Найдите файл "mobilecontig.ovpn" и откройте его с помощью программы OpenVPN` +
             ` => Нажмите "AUD" => Нажмите "CONNECT" => Во всплывающем окне нажмите "Разрешить" \n \n` +
             `VPN подключен.`
@@ -27,7 +27,7 @@ export class VpnL10nRu implements VpnL10n {
     macInstruction(scene: s.MacInstruction): string {
         return `Сообщением выше отправлена видеоинструкция для настройки VPN на MAC или воспользуйтесь текстовой:\n \n`  +
             "1) Скачайте и установите клиент OpenVPN. [Ссылка для скачивания](https://openvpn.net/client-connect-vpn-for-mac-os/)\n \n" +
-            `2) В Telegram нажмите на отправленный ранее файл "pccontiq.ovpn" и откройте с помощью программы OpenVPN =>` +
+            `2) В Telegram нажмите на скаченный ранее файл "pccontiq.ovpn" и откройте с помощью программы OpenVPN =>` +
             ` на вопрос "Import .ovpn profile" нажмите "ОК" => нажмите "CONNECT"  \n \n` +
             `VPN подключен.`
     }
@@ -35,8 +35,8 @@ export class VpnL10nRu implements VpnL10n {
     androidInstruction(scene: s.AndroidInstruction): string {
         return `Сообщением выше отправлена видеоинструкция для настройки VPN на Android или воспользуйтесь текстовой:\n \n`  +
             "1) Скачайте и установите клиент OpenVPN из PlayStore. [Ссылка для скачивания](https://play.google.com/store/apps/details?id=net.openvpn.openvpn)\n \n" +
-            `2) В Telegram нажмите на отправленный ранее файл "mobilecontig.ovpn" => Выберите "Сохранить в загрузки => ` +
-            `Откройте приложение OpenVPN => Перейдите в в раздел "Import ProFile" => "File" => "Browser" => ` +
+            `2) В Telegram нажмите на скаченный ранее файл "mobilecontig.ovpn" => Выберите "Сохранить в загрузки\n \n` +
+            `3) Откройте приложение OpenVPN => Перейдите в в раздел "Import ProFile" => "File" => "Browser" => ` +
             `"Скаченные" => Выберите "mobilecontig.ovpn" => на вопрос "Import .ovon protile" нажмите "ОК" => ` +
             `Установите галочку "Connect after import" и нажмите "ADD" \n \n` +
             `VPN подключен.`
@@ -45,7 +45,7 @@ export class VpnL10nRu implements VpnL10n {
     windowsInstruction(scene: s.WindowsInstruction): string {
         return `Сообщением выше отправлена видеоинструкция для настройки VPN на Windows или воспользуйтесь текстовой:\n \n`  +
             "1) Скачайте и установите клиент OpenVPN.  [Ссылка для скачивания](https://openvpn.net/client-connect-vpn-for-windows/)\n \n" +
-            `2) В Telegram нажмите на отправленный ранее файл "pccontiq.ovpn" и откройте с помощью программы OpenVPN => ` +
+            `2) В Telegram нажмите на скаченный ранее файл "pccontiq.ovpn" и откройте с помощью программы OpenVPN => ` +
             `на вопрос "Import .ovpn profile" нажмите "ОК" => нажимаем "CONNECT"\n \n` +
             `VPN подключен.`
     }
