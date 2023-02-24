@@ -21,7 +21,7 @@ export class VpnL10nRu implements VpnL10n {
             `2) В Telegram нажмите на отправленный ранее файл "mobilecontig.ovpn" => Выберите "Сохранить в файлы" => Нажмите "Сохранить" \n \n` +
             `3) Откройте приложение "Файлы" => Найдите файл "mobilecontig.ovpn" и откройте его с помощью программы OpenVPN` +
             ` => Нажмите "AUD" => Нажмите "CONNECT" => Во всплывающем окне нажмите "Разрешить" \n \n` +
-            `VPN подключен. На забывайте отключать VPN, когда в нем нет потребности`
+            `VPN подключен.`
     }
 
     macInstruction(scene: s.MacInstruction): string {
@@ -29,7 +29,7 @@ export class VpnL10nRu implements VpnL10n {
             "1) Скачайте и установите клиент OpenVPN. [Ссылка для скачивания](https://openvpn.net/downloads/)\n \n" +
             `2) В Telegram нажмите на отправленный ранее файл "pccontiq.ovpn" и откройте с помощью программы OpenVPN =>` +
             ` на вопрос "Import .ovpn profile" нажмите "ОК" => нажмите "CONNECT"  \n \n` +
-            `VPN подключен. На забывайте отключать VPN, когда в нем нет потребности`
+            `VPN подключен.`
     }
 
     androidInstruction(scene: s.AndroidInstruction): string {
@@ -39,7 +39,7 @@ export class VpnL10nRu implements VpnL10n {
             `Откройте приложение OpenVPN => Перейдите в в раздел "Import ProFile" => "File" => "Browser" => ` +
             `"Скаченные" => Выберите "mobilecontig.ovpn" => на вопрос "Import .ovon protile" нажмите "ОК" => ` +
             `Установите галочку "Connect after import" и нажмите "ADD" \n \n` +
-            `VPN подключен. На забывайте отключать VPN, когда в нем нет потребности`
+            `VPN подключен.`
     }
 
     windowsInstruction(scene: s.WindowsInstruction): string {
@@ -47,13 +47,13 @@ export class VpnL10nRu implements VpnL10n {
             "1) Скачайте и установите клиент OpenVPN. [Ссылка для скачивания](https://openvpn.net/downloads/openvon-connect-v3-windows.msI)\n \n" +
             `2) В Telegram нажмите на отправленный ранее файл "pccontiq.ovpn" и откройте с помощью программы OpenVPN => ` +
             `на вопрос "Import .ovpn profile" нажмите "ОК" => нажимаем "CONNECI"\n \n` +
-            `VPN подключен. На забывайте отключать VPN, когда в нем нет потребности`
+            `VPN подключен.`
     }
 
     generalInfo(scene: s.GeneralInfo): string {
         return (`1) Технические характиристики: \n - входящая скорость 10-50 Mbit \n - исходящая скорость 20-50 Mbit \n ` +
             `- время отклика 100 ms \n - установка соединения до 3 s   \n \n` +
-            `2) Месячный трафик на 1 пользователя 32GB. [Инструкция](https://www.youtube.com/watch?v=_a7QSX1EkxI&ab_channel=JustUse)`+
+            `2) Месячный трафик на 1 пользователя 320GB. [Инструкция](https://www.youtube.com/watch?v=_a7QSX1EkxI&ab_channel=JustUse)`+
             ` по автоматическому запуску VPN для интересующих приложений \n \n` +
             `3) В случае падения скорости соединения, сязанную с ростом числа пользователей, ` +
             `запустим дополнительные сервера с платной подпиской \n \n` +
