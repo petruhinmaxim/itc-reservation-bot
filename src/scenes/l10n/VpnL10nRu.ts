@@ -18,9 +18,9 @@ export class VpnL10nRu implements VpnL10n {
     iphoneInstruction(scene: s.IphoneInstruction): string {
         return 'Для настройки VPN на Iphone следуйте инструкции:\n \n'  +
             "1) Скачайте и установите клиент OpenVPN. [Ссылка для скачивания](https://apps.apple.com/ru/app/openvpn-connect/id590379981)\n \n" +
-            '2) Откройте загруженный ранее конфиг с помощью программы OpenVPN \n \n' +
-            '3) Активируйте в программе конфиг бла бла бла.... \n \n' +
-            'Теперь вы сможете включать VPN в настройках одним кликом'
+            '2) В Telegram нажмите на скаченный ранее файл mobilecontig.ovpn => Выберите "Сохранить в файлы" => Нажмите "Сохранить" \n \n' +
+            '3) Откройте приложение "Файлы" => Найдите его и откройте с помощью программы OpenVPN => Нажмите "AUD" => Нажмите "CONNECT" => Во всплывающем окне нажмите "Разрещить" \n \n' +
+            'VPN подключен. На забывайте отключать VPN, когда в нем нет потребности'
     }
 
     macInstruction(scene: s.MacInstruction): string {

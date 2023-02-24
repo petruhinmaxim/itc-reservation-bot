@@ -114,7 +114,7 @@ export default class LogicActor {
                 user.currentScene = {
                     tpe: "IphoneInstruction",
                     messageId: payload.messageId,
-                    filename: "Iphone.gif",
+                    filename: "iphone.gif",
                     source: "media/instruction/iphone.gif"
                 }
                 let out: OutputPayload = {
