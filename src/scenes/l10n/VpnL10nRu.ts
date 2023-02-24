@@ -1,5 +1,5 @@
-import {VpnL10n} from `./VpnL10n`
-import * as s from `../../model/scene-types`
+import {VpnL10n} from "./VpnL10n"
+import * as s from "../../model/scene-types"
 import {escapeString} from "../text-util";
 
 export class VpnL10nRu implements VpnL10n {
