@@ -10,7 +10,7 @@ export interface TelegramUserDataRepository {
 
   selectTelegramUserDataByUserId(
       connection: VpnDBConnection,
-      telegramTelegramUserDataId: number
+      telegramUserDataId: number
   ): Promise<TelegramUserData | undefined>
 
   updateTelegramUserData(
@@ -42,11 +42,11 @@ class TelegramUserDataRepositoryImpl implements TelegramUserDataRepository {
 
   async selectTelegramUserDataByUserId(
     connection: VpnDBConnection,
-    telegramTelegramUserDataId: number
+    telegramUserDataId: number
   ): Promise<TelegramUserData | undefined> {
     return sql.selectTelegramUserDataByUserId(
       await this.clientLocator.ensureClient(connection),
-      telegramTelegramUserDataId
+      telegramUserDataId
     )
   }
 

@@ -85,7 +85,6 @@ export default class TelegrafActor {
     }
 
     async processOutboundTelegramMessage(msg: tg.OutboundTelegramMessage) {
-        try {
             if (this.props.channel != msg.channel) return
             switch (msg.outputPayload.tpe) {
                 case 'SendOutput': {
@@ -175,7 +174,5 @@ export default class TelegrafActor {
                     }
                     break
             }
-        }
-        catch (Ignore) {}
     }
 }

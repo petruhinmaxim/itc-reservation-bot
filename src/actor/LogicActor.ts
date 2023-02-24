@@ -81,7 +81,6 @@ export default class LogicActor {
     }
 
     async processInboundTelegramMessage(msg: tg.InboundTelegramMessage) {
-        try {
             await this.vpnDB.withConnection(this.log, async con => {
                 const vpnUser = await this.ensureUser(con, msg.telegramUser)
                 switch (msg.inputPayload.tpe) {
@@ -93,9 +92,6 @@ export default class LogicActor {
                         break
                 }
             })
-        } catch (e) {
-            this.log.error(`processInboundTelegramMessageError: ${e}`)
-        }
     }
 
     private async processMainCallback(
@@ -277,7 +273,6 @@ export default class LogicActor {
     }
 
     async processResendOutboundMessage(msg: tg.OutboundTelegramMessage) {
-        try {
             let user: VpnUser | undefined
             let userData: TelegramUserData | undefined
             await this.vpnDB.withConnection(this.log, async con => {
@@ -306,8 +301,5 @@ export default class LogicActor {
                 })
                 await this.sendToUser(user, out)
             }
-        } catch (e) {
-            this.log.error(`resendError: ${e}`)
-        }
     }
 }
