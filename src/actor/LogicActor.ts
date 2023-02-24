@@ -81,17 +81,21 @@ export default class LogicActor {
     }
 
     async processInboundTelegramMessage(msg: tg.InboundTelegramMessage) {
-        await this.vpnDB.withConnection(this.log, async con => {
-            const vpnUser = await this.ensureUser(con, msg.telegramUser)
-            switch (msg.inputPayload.tpe) {
-                case 'TextInput':
-                    await this.processMainText(con, vpnUser, msg.telegramUser, msg.inputPayload)
-                    break
-                case 'CallbackInput':
-                    await this.processMainCallback(con, vpnUser, msg.telegramUser, msg.inputPayload,)
-                    break
-            }
-        })
+        try {
+            await this.vpnDB.withConnection(this.log, async con => {
+                const vpnUser = await this.ensureUser(con, msg.telegramUser)
+                switch (msg.inputPayload.tpe) {
+                    case 'TextInput':
+                        await this.processMainText(con, vpnUser, msg.telegramUser, msg.inputPayload)
+                        break
+                    case 'CallbackInput':
+                        await this.processMainCallback(con, vpnUser, msg.telegramUser, msg.inputPayload,)
+                        break
+                }
+            })
+        } catch (e) {
+            this.log.error(`processInboundTelegramMessageError: ${e}`)
+        }
     }
 
     private async processMainCallback(
@@ -273,33 +277,37 @@ export default class LogicActor {
     }
 
     async processResendOutboundMessage(msg: tg.OutboundTelegramMessage) {
-        let user: VpnUser | undefined
-        let userData: TelegramUserData | undefined
-        await this.vpnDB.withConnection(this.log, async con => {
-            user = await this.vpnUserRepo.selectVpnUserByUserId(con, msg.chatId)
-            userData = await this.telegramUserDataRepo.selectTelegramUserDataByUserId(con, msg.chatId)
-        })
-        if (user && userData && user.currentScene.messageId) {
-            let out: OutputPayload = {
-                tpe: 'DeleteMessageOutput',
-                messageId: user.currentScene.messageId
-            }
-            await this.sendToUser(user, out)
-            if (user.currentScene.tpe == "GetConfigs") {
-                user.currentScene = {
-                    tpe: "Start",
-                    userName: userData.firstName
-                }
-            }
-            out = {
-                tpe: 'SendOutput',
-                scene: user.currentScene
-            }
+        try {
+            let user: VpnUser | undefined
+            let userData: TelegramUserData | undefined
             await this.vpnDB.withConnection(this.log, async con => {
-                if (user)
-                    await this.vpnUserRepo.upsertVpnUser(con, user)
+                user = await this.vpnUserRepo.selectVpnUserByUserId(con, msg.chatId)
+                userData = await this.telegramUserDataRepo.selectTelegramUserDataByUserId(con, msg.chatId)
             })
-            await this.sendToUser(user, out)
+            if (user && userData && user.currentScene.messageId) {
+                let out: OutputPayload = {
+                    tpe: 'DeleteMessageOutput',
+                    messageId: user.currentScene.messageId
+                }
+                await this.sendToUser(user, out)
+                if (user.currentScene.tpe == "GetConfigs") {
+                    user.currentScene = {
+                        tpe: "Start",
+                        userName: userData.firstName
+                    }
+                }
+                out = {
+                    tpe: 'SendOutput',
+                    scene: user.currentScene
+                }
+                await this.vpnDB.withConnection(this.log, async con => {
+                    if (user)
+                        await this.vpnUserRepo.upsertVpnUser(con, user)
+                })
+                await this.sendToUser(user, out)
+            }
+        } catch (e) {
+            this.log.error(`resendError: ${e}`)
         }
     }
 }
