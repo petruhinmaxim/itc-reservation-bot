@@ -26,7 +26,7 @@ export class VpnL10nRu implements VpnL10n {
 
     macInstruction(scene: s.MacInstruction): string {
         return `Сообщением выше отправлена видеоинструкция для настройки VPN на MAC или воспользуйтесь текстовой:\n \n`  +
-            "1) Скачайте и установите клиент OpenVPN. [Ссылка для скачивания](https://openvpn.net/downloads/)\n \n" +
+            "1) Скачайте и установите клиент OpenVPN. [Ссылка для скачивания](https://openvpn.net/client-connect-vpn-for-mac-os/)\n \n" +
             `2) В Telegram нажмите на отправленный ранее файл "pccontiq.ovpn" и откройте с помощью программы OpenVPN =>` +
             ` на вопрос "Import .ovpn profile" нажмите "ОК" => нажмите "CONNECT"  \n \n` +
             `VPN подключен.`
@@ -44,9 +44,9 @@ export class VpnL10nRu implements VpnL10n {
 
     windowsInstruction(scene: s.WindowsInstruction): string {
         return `Сообщением выше отправлена видеоинструкция для настройки VPN на Windows или воспользуйтесь текстовой:\n \n`  +
-            "1) Скачайте и установите клиент OpenVPN. [Ссылка для скачивания](https://openvpn.net/downloads/openvon-connect-v3-windows.msI)\n \n" +
+            "1) Скачайте и установите клиент OpenVPN.  [Ссылка для скачивания](https://openvpn.net/client-connect-vpn-for-windows/)\n \n" +
             `2) В Telegram нажмите на отправленный ранее файл "pccontiq.ovpn" и откройте с помощью программы OpenVPN => ` +
-            `на вопрос "Import .ovpn profile" нажмите "ОК" => нажимаем "CONNECI"\n \n` +
+            `на вопрос "Import .ovpn profile" нажмите "ОК" => нажимаем "CONNECT"\n \n` +
             `VPN подключен.`
     }
 

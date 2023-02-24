@@ -163,14 +163,12 @@ export default class TelegrafActor {
                     if (scene == "IphoneInstruction" || scene == "MacInstruction" ||
                         scene == "AndroidInstruction" || scene == "WindowsInstruction"
                     ) {
-                        await this.telegraf.telegram.sendDocument(
+                        await this.telegraf.telegram.sendVideo(
                             msg.chatId, {
                                 filename: msg.outputPayload.scene.filename,
                                 source: msg.outputPayload.scene.source,
-                            },
-                            {
-                                disable_content_type_detection: false
-                            }
+                        }
+
                         )
                         await this.selfActor.getParent().send("processResendOutboundMessage",
                             msg)

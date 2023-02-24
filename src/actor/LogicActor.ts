@@ -118,8 +118,8 @@ export default class LogicActor {
                 user.currentScene = {
                     tpe: "IphoneInstruction",
                     messageId: payload.messageId,
-                    filename: "iphone.gif",
-                    source: "media/instruction/iphone.gif"
+                    filename: "Iphone.mp4",
+                    source: "media/instruction/Iphone.mp4"
                 }
                 let out: OutputPayload = {
                     tpe: 'SendFile',
@@ -132,8 +132,8 @@ export default class LogicActor {
                 user.currentScene = {
                     tpe: "MacInstruction",
                     messageId: payload.messageId,
-                    filename: "Mac.gif",
-                    source: "media/instruction/mac.gif"
+                    filename: "mac.mp4",
+                    source: "media/instruction/mac.mp4"
                 }
                 let out: OutputPayload = {
                     tpe: 'SendFile',
@@ -146,8 +146,8 @@ export default class LogicActor {
                 user.currentScene = {
                     tpe: "AndroidInstruction",
                     messageId: payload.messageId,
-                    filename: "Android.gif",
-                    source: "media/instruction/android.gif"
+                    filename: "android.mp4",
+                    source: "media/instruction/android.mp4"
                 }
                 let out: OutputPayload = {
                     tpe: 'SendFile',
@@ -160,8 +160,8 @@ export default class LogicActor {
                 user.currentScene = {
                     tpe: "WindowsInstruction",
                     messageId: payload.messageId,
-                    filename: "Windows.gif",
-                    source: "media/instruction/windows.gif"
+                    filename: "windows.mp4",
+                    source: "media/instruction/windows.mp4"
                 }
                 let out: OutputPayload = {
                     tpe: 'SendFile',
