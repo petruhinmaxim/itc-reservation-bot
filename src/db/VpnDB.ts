@@ -3,6 +3,9 @@ import { Logger } from '../util/Logger'
 
 export type VpnDBConnection = string
 
+export type TransactionIsolation =
+    'readUncommitted' | 'readCommitted' | 'repeatableRead' | 'serializable'
+
 export interface VpnDBClientLocator {
   ensureClient(
     connection: VpnDBConnection
@@ -18,6 +21,13 @@ export interface VpnDB extends VpnDBClientLocator {
   withTransaction<T>(
     log: Logger,
     fn: (connection: VpnDBConnection) => Promise<T>
+  ): Promise<T>
+
+  withTransactionIsolation<T>(
+      log: Logger,
+      isolation: TransactionIsolation,
+      retryAllowed: boolean,
+      fn: (connection: VpnDBConnection) => Promise<T>
   ): Promise<T>
 
   end(): Promise<void>
@@ -101,6 +111,62 @@ class VpnDBImpl implements VpnDB {
       return Promise.reject(e)
     } finally {
       await this.release(connection)
+    }
+  }
+
+  async withTransactionIsolation<T>(
+      log: Logger,
+      isolation: TransactionIsolation,
+      retryAllowed: boolean,
+      fn: (connection: VpnDBConnection) => Promise<T>
+  ): Promise<T> {
+    const connection = await this.connect()
+    const client = await this.ensureClient(connection)
+
+    const txIsolation =
+        isolation == 'serializable' ? 'SERIALIZABLE'
+            : isolation == 'readCommitted' ? 'READ COMMITTED'
+                : isolation == 'repeatableRead' ? 'REPEATABLE READ'
+                    : 'READ UNCOMMITTED'
+
+    let error: any | undefined = undefined
+    let result: T | undefined = undefined
+
+    try {
+      let canTry = true
+      while (canTry) {
+        try {
+          await client.query('BEGIN')
+          await client.query(`SET TRANSACTION ISOLATION LEVEL ${txIsolation}`)
+          result = await fn(connection)
+          await client.query('COMMIT')
+          canTry = false
+        } catch (e: any) {
+          canTry = retryAllowed
+              && e.hint != null
+              && e.hint.indexOf('transaction might succeed if retried') != -1
+          if (!canTry) {
+            error = e
+          }
+          try {
+            await client.query('ROLLBACK')
+          } catch (rollbackError) {
+            if (!canTry) {
+              log.error(rollbackError, `ROLLBACK failed`)
+            }
+          }
+        }
+      }
+    } finally {
+      await this.release(connection)
+    }
+
+    if (result != null) {
+      return result
+    } else if (error != null) {
+      return Promise.reject(error)
+    } else {
+      return Promise.reject(new Error('Something went wrong in withTransactionIsolation'))
     }
   }
 }
