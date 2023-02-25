@@ -10,7 +10,7 @@ export class VpnL10nRu implements VpnL10n {
             userName = `Симпотяга`
         }
         return `Привет, ${userName}.\n` +
-            `Я помогу тебе настроить VPN на твоем устройстве.\n` +
+            `Я помогу настроить VPN на твоем устройстве.\n` +
             `Для этого просто скачай конфиги, нажав на кнопку ниже, и переходи к соответствующей инструкции.\n` +
             `Не забудь ознакомиться с дополнительной информацией.`
     }
@@ -21,7 +21,7 @@ export class VpnL10nRu implements VpnL10n {
             `2) В Telegram нажмите на скаченный ранее файл "mobilecontig.ovpn" => Выберите "Сохранить в файлы" => Нажмите "Сохранить" \n \n` +
             `3) Откройте приложение "Файлы" => Найдите файл "mobilecontig.ovpn" и откройте его с помощью программы OpenVPN` +
             ` => Нажмите "AUD" => Нажмите "CONNECT" => Во всплывающем окне нажмите "Разрешить" \n \n` +
-            `VPN подключен.`
+            `VPN подключен`
     }
 
     macInstruction(scene: s.MacInstruction): string {
@@ -29,7 +29,7 @@ export class VpnL10nRu implements VpnL10n {
             "1) Скачайте и установите клиент OpenVPN. [Ссылка для скачивания](https://openvpn.net/client-connect-vpn-for-mac-os/)\n \n" +
             `2) В Telegram нажмите на скаченный ранее файл "pccontiq.ovpn" и откройте с помощью программы OpenVPN =>` +
             ` на вопрос "Import .ovpn profile" нажмите "ОК" => нажмите "CONNECT"  \n \n` +
-            `VPN подключен.`
+            `VPN подключен`
     }
 
     androidInstruction(scene: s.AndroidInstruction): string {
@@ -39,7 +39,7 @@ export class VpnL10nRu implements VpnL10n {
             `3) Откройте приложение OpenVPN => Перейдите в в раздел "Import ProFile" => "File" => "Browser" => ` +
             `"Скаченные" => Выберите "mobilecontig.ovpn" => на вопрос "Import .ovon protile" нажмите "ОК" => ` +
             `Установите галочку "Connect after import" и нажмите "ADD" \n \n` +
-            `VPN подключен.`
+            `VPN подключен`
     }
 
     windowsInstruction(scene: s.WindowsInstruction): string {
@@ -47,15 +47,15 @@ export class VpnL10nRu implements VpnL10n {
             "1) Скачайте и установите клиент OpenVPN.  [Ссылка для скачивания](https://openvpn.net/client-connect-vpn-for-windows/)\n \n" +
             `2) В Telegram нажмите на скаченный ранее файл "pccontiq.ovpn" и откройте с помощью программы OpenVPN => ` +
             `на вопрос "Import .ovpn profile" нажмите "ОК" => нажимаем "CONNECT"\n \n` +
-            `VPN подключен.`
+            `VPN подключен`
     }
 
     generalInfo(scene: s.GeneralInfo): string {
         return (`1) Технические характиристики: \n - входящая скорость 10-50 Mbit \n - исходящая скорость 20-50 Mbit \n ` +
             `- время отклика 100 ms \n - установка соединения до 3 s   \n \n` +
-            `2) Месячный трафик на 1 пользователя 320GB. [Инструкция](https://www.youtube.com/watch?v=_a7QSX1EkxI&ab_channel=JustUse)`+
-            ` по автоматическому запуску VPN для интересующих приложений \n \n` +
-            `3) В случае падения скорости соединения, сязанную с ростом числа пользователей, ` +
+            `2) Месячный трафик на 1 пользователя 320GB. Для экономии трафика рекомендуем [инструкцию](https://www.youtube.com/watch?v=_a7QSX1EkxI&ab_channel=JustUse)` +
+            ` по автоматическому запуску VPN для интересующих приложений на Iphone \n \n` +
+            `3) В случае падения скорости соединения, связанную с ростом числа пользователей, ` +
             `запустим дополнительные сервера с платной подпиской \n \n` +
             `Администрирование серверов @ASLomonosov \n` +
             `Архитектурные решения @aaltergot \n` +
