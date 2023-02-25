@@ -35,7 +35,7 @@ export class VpnL10nRu implements VpnL10n {
     androidInstruction(scene: s.AndroidInstruction): string {
         return `Сообщением выше отправлена видеоинструкция для настройки VPN на Android или воспользуйтесь текстовой:\n \n`  +
             "1) Скачайте и установите клиент OpenVPN из PlayStore. [Ссылка для скачивания](https://play.google.com/store/apps/details?id=net.openvpn.openvpn)\n \n" +
-            `2) В Telegram нажмите на скаченный ранее файл "mobilecontig.ovpn" => Выберите "Сохранить в загрузки\n \n` +
+            `2) В Telegram нажмите на скаченный ранее файл "mobilecontig.ovpn" => Выберите "Сохранить в загрузки"\n \n` +
             `3) Откройте приложение OpenVPN => Перейдите в в раздел "Import ProFile" => "File" => "Browser" => ` +
             `"Скаченные" => Выберите "mobilecontig.ovpn" => на вопрос "Import .ovon protile" нажмите "ОК" => ` +
             `Установите галочку "Connect after import" и нажмите "ADD" \n \n` +
