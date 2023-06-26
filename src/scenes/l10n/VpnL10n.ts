@@ -11,4 +11,5 @@ export interface VpnL10n {
   goToWindowsInstruction():string
   goToGeneralInfo():string
   goToGetConfigs():string
+  goToFeedback():string
 }

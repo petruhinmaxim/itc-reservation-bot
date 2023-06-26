@@ -1,6 +1,7 @@
 export type Scene =
     Start | DeleteMassage | IphoneInstruction | MacInstruction |
-    AndroidInstruction | WindowsInstruction | GetConfigs | GeneralInfo
+    AndroidInstruction | WindowsInstruction | GetConfigs | GeneralInfo |
+    SendMassageToUser | Feedback
 
 export type Start =  {
   tpe: 'Start'
@@ -50,5 +51,17 @@ export type GetConfigs =  {
 
 export type GeneralInfo =  {
   tpe: 'GeneralInfo'
+  messageId?: number
+}
+
+export type SendMassageToUser =  {
+  tpe: 'SendMassageToUser'
+  messageId?: number
+  userName?: string
+  text: string
+}
+
+export type Feedback =  {
+  tpe: 'Feedback'
   messageId?: number
 }

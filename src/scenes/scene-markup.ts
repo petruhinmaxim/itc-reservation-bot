@@ -13,6 +13,7 @@ export function getMarkup(scene: s.Scene, l10n: VpnL10n):
       buttons.push([getIphoneInstruction(l10n), getMacInstruction(l10n)])
       buttons.push([getAndroidInstruction(l10n), getWindowsInstruction(l10n)])
       buttons.push([getGeneralInfo(l10n)])
+      buttons.push([getFeedback(l10n)])
       break
     case "IphoneInstruction":
       buttons.push([getStartButton(l10n)])
@@ -27,6 +28,13 @@ export function getMarkup(scene: s.Scene, l10n: VpnL10n):
       buttons.push([getStartButton(l10n)])
       break
     case "GeneralInfo":
+      buttons.push([getStartButton(l10n)])
+      break
+    case "Feedback":
+      buttons.push([getStartButton(l10n)])
+      break
+    case "SendMassageToUser":
+      buttons.push([getFeedback(l10n)])
       buttons.push([getStartButton(l10n)])
       break
   }
@@ -57,6 +65,10 @@ function getWindowsInstruction(l10n: VpnL10n) {
 
 function getGeneralInfo(l10n: VpnL10n) {
   return Markup.button.callback(l10n.goToGeneralInfo(), markupDataGen('GeneralInfo'))
+}
+
+function getFeedback(l10n: VpnL10n) {
+  return Markup.button.callback(l10n.goToFeedback(), markupDataGen('Feedback'))
 }
 
 function getConfigs(l10n: VpnL10n) {

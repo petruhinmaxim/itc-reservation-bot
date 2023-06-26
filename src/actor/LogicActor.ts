@@ -1,7 +1,14 @@
 import {Actor} from 'comedy'
 import {actorLogger, Logger} from '../util/Logger'
 import * as tg from '../model/telegram-massege-types'
-import {TelegramUserData, telegramUserEquals, UserConfigs, VpnConfig, VpnUser} from '../model/vpn-user-types'
+import {
+    TelegramUserData,
+    telegramUserEquals,
+    UserConfigs,
+    UserFeedback,
+    VpnConfig,
+    VpnUser
+} from '../model/vpn-user-types'
 import {VpnDB, VpnDBConnection} from '../db/VpnDB'
 import {makeTelegramUserDataRepository, TelegramUserDataRepository} from '../db/repository/TelegramUserDataRepository'
 import {makeVpnUserRepository, VpnUserRepository} from "../db/repository/VpnUserRepository"
@@ -9,6 +16,7 @@ import {markupDataParseSceneTpe} from '../scenes/scene-markup'
 import {ConfigRepository, makeConfigRepository} from "../db/repository/ConfigRepository"
 import {makeUserConfigRepository, UserConfigRepository} from "../db/repository/UserConfigRepository"
 import {OutputPayload} from "../model/telegram-massege-types"
+import {makeUserFeedbackRepository, UserFeedbackRepository} from "../db/repository/UserFeedbackRepository";
 
 export default class LogicActor {
     private readonly vpnDB: VpnDB
@@ -18,6 +26,7 @@ export default class LogicActor {
     private vpnUserRepo!: VpnUserRepository
     private configRepo!: ConfigRepository
     private userConfigsRepo!: UserConfigRepository
+    private userFeedbackRepo!: UserFeedbackRepository
 
     static inject() {
         return ['VpnDBResource']
@@ -34,6 +43,7 @@ export default class LogicActor {
         this.vpnUserRepo = makeVpnUserRepository(this.vpnDB)
         this.configRepo = makeConfigRepository(this.vpnDB)
         this.userConfigsRepo = makeUserConfigRepository(this.vpnDB)
+        this.userFeedbackRepo = makeUserFeedbackRepository(this.vpnDB)
         this.log.info('init')
     }
 
@@ -215,6 +225,13 @@ export default class LogicActor {
                 }
                 break
             }
+            case 'Feedback': {
+                user.currentScene = {
+                    tpe: "Feedback",
+                    messageId: payload.messageId
+                }
+                break
+            }
             case 'DeleteMassage': {
                 user.currentScene = {
                     tpe: "DeleteMassage",
@@ -245,34 +262,79 @@ export default class LogicActor {
         userData: TelegramUserData,
         payload: tg.TextInput
     ) {
-        // dell user message
-        let out: tg.OutputPayload = {
-            tpe: 'DeleteMessageOutput',
-            messageId: payload.messageId
-        }
-        await this.sendToUser(user, out)
-
-        if (payload.text == '/start') {
-            // del previous message
-            if (user.currentScene.messageId) {
-                out = {
-                    tpe: 'DeleteMessageOutput',
-                    messageId: user.currentScene.messageId
-                }
-                await this.sendToUser(user, out)
+        if (user.currentScene.tpe == "Feedback" ) {
+            const userFeedback: UserFeedback = {
+                telegramUserId: user.telegramUserId,
+                feedback: payload.text
             }
+            await this.userFeedbackRepo.insertFeedback(con, userFeedback)
+
             user.currentScene = {
-                tpe: 'Start',
+                tpe: "WindowsInstruction",
+                messageId: payload.messageId,
+                filename: "tnx.mp4",
+                source: "media/tnx.mp4"
+            }
+            let out: OutputPayload = {
+                tpe: 'SendFile',
+                scene: user.currentScene
+            }
+            await this.sendToUser(user, out)
+
+            user.currentScene = {
+                tpe: "Start",
                 messageId: payload.messageId,
                 userName: userData.firstName
             }
-            out = {
-                tpe: 'SendOutput',
-                scene: user.currentScene
+            await this.vpnUserRepo.upsertVpnUser(con, user)
+        }
+        else {
+            // dell user message
+            let out: tg.OutputPayload = {
+                tpe: 'DeleteMessageOutput',
+                messageId: payload.messageId
+            }
+            await this.sendToUser(user, out)
+
+            if (payload.text == '/start') {
+                // del previous message
+                if (user.currentScene.messageId) {
+                    out = {
+                        tpe: 'DeleteMessageOutput',
+                        messageId: user.currentScene.messageId
+                    }
+                    await this.sendToUser(user, out)
+                }
+                user.currentScene = {
+                    tpe: 'Start',
+                    messageId: payload.messageId,
+                    userName: userData.firstName
+                }
+                out = {
+                    tpe: 'SendOutput',
+                    scene: user.currentScene
+                }
+                await this.sendToUser(user, out)
+                await this.vpnUserRepo.upsertVpnUser(con, user)
+            } else if (payload.text.indexOf("sendToAllUsers424140go") != -1) {
+                const textToSend = payload.text.replace("sendToAllUsers424140go", "")
+                const allUsers = await this.telegramUserDataRepo.selectAllUsers(con)
+                for (const userToSend of allUsers) {
+                    user.currentScene = {
+                        tpe: 'SendMassageToUser',
+                        messageId: payload.messageId,
+                        userName: userToSend.firstName,
+                        text: textToSend
+                    }
+                    user.telegramUserId = userToSend.telegramUserId
+                    out = {
+                        tpe: 'SendAdminMassage',
+                        scene: user.currentScene
+                    }
+                    await this.sendToUser(user, out)
+                }
             }
         }
-        await this.sendToUser(user, out)
-        await this.vpnUserRepo.upsertVpnUser(con, user)
     }
 
     async processResendOutboundMessage(msg: tg.OutboundTelegramMessage) {

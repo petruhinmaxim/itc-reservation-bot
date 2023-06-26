@@ -53,14 +53,32 @@ export class VpnL10nRu implements VpnL10n {
     generalInfo(scene: s.GeneralInfo): string {
         return (`1) Технические характиристики: \n - входящая скорость 10-50 Mbit \n - исходящая скорость 20-50 Mbit \n ` +
             `- время отклика 100 ms \n - установка соединения до 3 s   \n \n` +
-            `2) Месячный трафик на 1 пользователя 320GB. Для экономии трафика рекомендуем [инструкцию](https://www.youtube.com/watch?v=_a7QSX1EkxI&ab_channel=JustUse)` +
+            `2) Месячный трафик на 1 пользователя 160GB. Для экономии трафика рекомендуем [инструкцию](https://www.youtube.com/watch?v=_a7QSX1EkxI&ab_channel=JustUse)` +
             ` по автоматическому запуску VPN для интересующих приложений на Iphone \n \n` +
-            `3) В случае падения скорости соединения, связанную с ростом числа пользователей, ` +
-            `запустим дополнительные сервера с платной подпиской \n \n` +
             `Администрирование серверов @ASLomonosov \n` +
             `Архитектурные решения @aaltergot \n` +
             `Разработка ботов @petruhinMaks \n`
             )
+    }
+
+    feedback(scene: s.Feedback): string {
+        return (`Отправьте, пожалуйста, следующую информацию одним сообщением:\n` +
+            `1) Название твоего интернет провайдера \n` +
+            `2) В каком городе находишься \n` +
+            `3) Оцени по 10-ти бальной шкале качество работы. Где 0 это не работает, а 10 ни разу не наблюдали сбоев \n` +
+            `4) Если не затруднит, слелай замер скорости соединения в среду 18 МСК. ` +
+            `Понадобятся 2 цифры: скорость входящего трафика с выключенным VPN и c включенным. ` +
+            `Рекомендуем сервис [speedtest](https://www.speedtest.net/) \n`
+        )
+    }
+
+    sendMassageToUser(scene: s.SendMassageToUser): string {
+        let userName = scene.userName
+        if (!userName) {
+            userName = `Симпотяга`
+        }
+        return `Привет, ${userName}.\n` +
+            scene.text
     }
 
     //navigation
@@ -100,6 +118,12 @@ export class VpnL10nRu implements VpnL10n {
         )
     }
 
+    goToFeedback(): string {
+        return escapeString(
+            `Обратная связь`
+        )
+    }
+
     goToGetConfigs(): string {
         return escapeString(
             `Скачать конфиги`
@@ -126,6 +150,12 @@ export class VpnL10nRu implements VpnL10n {
                 break
             case "GeneralInfo":
                 text = this.generalInfo(scene)
+                break
+            case "SendMassageToUser":
+                text = this.sendMassageToUser(scene)
+                break
+            case "Feedback":
+                text = this.feedback(scene)
                 break
         }
         return text

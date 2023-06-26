@@ -1,6 +1,6 @@
 import { ClientBase, QueryResultRow } from 'pg'
 import { VpnDBClientLocator, VpnDBConnection, VpnDB } from '../VpnDB'
-import { TelegramUserData } from '../../model/vpn-user-types'
+import {TelegramUserData, VpnUser} from '../../model/vpn-user-types'
 
 export interface TelegramUserDataRepository {
   insertTelegramUserData(
@@ -17,6 +17,10 @@ export interface TelegramUserDataRepository {
       connection: VpnDBConnection,
       vpnTelegramUserData: TelegramUserData
   ): Promise <TelegramUserData>
+
+  selectAllUsers(
+      connection: VpnDBConnection
+  ): Promise<TelegramUserData[]>
 }
 
 export function makeTelegramUserDataRepository(db: VpnDB): TelegramUserDataRepository {
@@ -57,6 +61,14 @@ class TelegramUserDataRepositoryImpl implements TelegramUserDataRepository {
     return sql.updateTelegramUserData(
       await this.clientLocator.ensureClient(connection),
         telegramUserData
+    )
+  }
+
+  async selectAllUsers(
+      connection: VpnDBConnection
+  ): Promise<TelegramUserData[]> {
+    return sql.selectAllUsers(
+        await this.clientLocator.ensureClient(connection),
     )
   }
 }
@@ -118,5 +130,15 @@ namespace sql {
         [telegramUserId, username, firstName, lastName, languageCode]
     )
     return telegramUserData
+  }
+
+  export async function selectAllUsers(
+      client: ClientBase
+  ): Promise<TelegramUserData[]> {
+    const res = await client.query(
+        `SELECT * 
+                        FROM telegram_user_data`
+    )
+    return res.rows.map(telegramUserDataRowMapping)
   }
 }

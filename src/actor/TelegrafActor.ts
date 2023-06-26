@@ -174,6 +174,23 @@ export default class TelegrafActor {
                         msg)
                 }
                 break
+
+            case 'SendAdminMassage':
+                if (msg.outputPayload.scene.tpe == "SendMassageToUser") {
+                    const scene = msg.outputPayload.scene
+                    let l10n = this.l10n(msg.userData);
+                    const text = l10n.getText(scene)
+                    await this.telegraf.telegram.sendMessage(
+                        msg.chatId,
+                        text, {
+                            ...mrk.getMarkup(scene, l10n),
+                            disable_web_page_preview: true,
+                            parse_mode: 'Markdown',
+                            disable_notification: false
+                        }
+                    )
+                    break
+                }
         }
     }
 }

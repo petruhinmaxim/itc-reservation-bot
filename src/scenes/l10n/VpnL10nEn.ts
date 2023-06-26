@@ -11,7 +11,6 @@ export class VpnL10nEn implements VpnL10n {
         )
     }
 
-    //navigation
 //navigation
     goToMainMenu(): string {
         return escapeString(
@@ -43,6 +42,13 @@ export class VpnL10nEn implements VpnL10n {
             'Дополнительная информация'
         )
     }
+
+    goToFeedback(): string {
+        return escapeString(
+            `Обратная связь`
+        )
+    }
+
     goToGetConfigs(): string {
         return escapeString(
             'Скачать конфиги'

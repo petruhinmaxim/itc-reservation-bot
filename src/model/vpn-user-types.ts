@@ -18,6 +18,11 @@ export type UserConfigs = {
     pcConfigId: number
 }
 
+export type UserFeedback = {
+  telegramUserId: number,
+  feedback: string
+}
+
 export type VpnServer = {
   serverId: number
   serverName: string
