@@ -3,7 +3,7 @@ import {actorLogger, Logger} from '../util/Logger'
 import * as tg from '../model/telegram-massege-types'
 import {
     TelegramUserData,
-    telegramUserEquals,
+    telegramUserEquals, UserAction,
     UserConfigs,
     UserFeedback,
     VpnConfig,
@@ -17,6 +17,7 @@ import {ConfigRepository, makeConfigRepository} from "../db/repository/ConfigRep
 import {makeUserConfigRepository, UserConfigRepository} from "../db/repository/UserConfigRepository"
 import {OutputPayload} from "../model/telegram-massege-types"
 import {makeUserFeedbackRepository, UserFeedbackRepository} from "../db/repository/UserFeedbackRepository";
+import {makeUserActionRepository, UserActionRepository} from "../db/repository/UserActionRepository";
 
 export default class LogicActor {
     private readonly vpnDB: VpnDB
@@ -27,6 +28,7 @@ export default class LogicActor {
     private configRepo!: ConfigRepository
     private userConfigsRepo!: UserConfigRepository
     private userFeedbackRepo!: UserFeedbackRepository
+    private userActionRepo!: UserActionRepository
 
     static inject() {
         return ['VpnDBResource']
@@ -44,6 +46,7 @@ export default class LogicActor {
         this.configRepo = makeConfigRepository(this.vpnDB)
         this.userConfigsRepo = makeUserConfigRepository(this.vpnDB)
         this.userFeedbackRepo = makeUserFeedbackRepository(this.vpnDB)
+        this.userActionRepo = makeUserActionRepository(this.vpnDB)
         this.log.info('init')
     }
 
@@ -72,6 +75,12 @@ export default class LogicActor {
                 }
             }
         }
+        const userAction: UserAction = {
+            telegramUserId:telegramUserData.telegramUserId,
+            actionAt: new Date(),
+            scene: vpnUser.currentScene.tpe
+        }
+        await this.userActionRepo.insertAction(con, userAction)
         return vpnUser
     }
 

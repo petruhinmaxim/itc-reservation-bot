@@ -23,6 +23,12 @@ export type UserFeedback = {
   feedback: string
 }
 
+export type UserAction = {
+  telegramUserId: number,
+  actionAt?: Date,
+  scene: string
+}
+
 export type VpnServer = {
   serverId: number
   serverName: string
