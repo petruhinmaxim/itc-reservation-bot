@@ -100,7 +100,8 @@ export default class LogicActor {
     }
 
     async processInboundTelegramMessage(msg: tg.InboundTelegramMessage) {
-        const vpnUser: VpnUser = await this.vpnDB.withTransactionIsolation(this.log, 'serializable', true, async con => {
+        const vpnUser: VpnUser = await this.vpnDB.withTransactionIsolation(
+            this.log, 'serializable', true, async con => {
             return await this.ensureUser(con, msg.telegramUser)
         })
 
@@ -195,22 +196,27 @@ export default class LogicActor {
                 await this.vpnDB.withConnection(this.log, async con => {
                     userConfigs = await this.userConfigsRepo.selectConfigsById(con, userData.telegramUserId)
                 })
+
                 if (userConfigs) {
                     mobileConfigId = userConfigs.mobileConfigId
                     pcConfigId = userConfigs.pcConfigId
                 } else {
-                    await this.vpnDB.withConnection(this.log, async con => {
+                    let newUserConfigs: UserConfigs = await this.vpnDB.withTransactionIsolation(
+                        this.log, 'serializable', true, async con => {
                         const userConfigsId: { mobileConfigId: number, pcConfigId: number } =
                             await this.configRepo.selectUnusedConfigs(con)
                         mobileConfigId = userConfigsId.mobileConfigId
                         pcConfigId = userConfigsId.pcConfigId
-
-                        await this.userConfigsRepo.insertUserConfig(con, {
+                            return await this.userConfigsRepo.insertUserConfig(con, {
                             telegramUserId: user.telegramUserId,
                             mobileConfigId,
                             pcConfigId
                         })
                     })
+                    if (newUserConfigs) {
+                        mobileConfigId = newUserConfigs.mobileConfigId
+                        pcConfigId = newUserConfigs.pcConfigId
+                    }
                 }
                 let mobileConfig: VpnConfig | undefined
                 let pcConfig: VpnConfig | undefined
