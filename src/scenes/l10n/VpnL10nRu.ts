@@ -51,10 +51,10 @@ export class VpnL10nRu implements VpnL10n {
     }
 
     generalInfo(scene: s.GeneralInfo): string {
-        return (`1) Технические характиристики: \n - входящая скорость 10-50 Mbit \n - исходящая скорость 20-50 Mbit \n ` +
+        return (`1) Технические характиристики: \n - входящая скорость 10-50 Mbit \n - исходящая скорость 10-50 Mbit \n ` +
             `- время отклика 100 ms \n - установка соединения до 3 s   \n \n` +
-            `2) Месячный трафик на 1 пользователя 160GB. Для экономии рекомендуем [инструкцию](https://www.youtube.com/watch?v=_a7QSX1EkxI&ab_channel=JustUse)` +
-            ` по автоматическому запуску VPN для интересующих приложений на Iphone \n \n` +
+            `2) [Инструкция](https://www.youtube.com/shorts/GuLgHMi79VU) по настройке автоматического включения VPN при запуске программ на Iphone \n \n` +
+
             `Администрирование серверов @ASLomonosov \n` +
             `Архитектурные решения @aaltergot \n` +
             `Разработка ботов @petruhinMaks \n`
