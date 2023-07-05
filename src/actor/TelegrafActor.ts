@@ -44,42 +44,48 @@ export default class TelegrafActor {
     async launch() {
         this.telegraf = new Telegraf(this.props.token)
 
-        this.telegraf.on('text', async (ctx) => {
-            const user = ctx.from
-            const messageId = ctx.message.message_id
-            const text = ctx.message.text
-            const msg: tg.InboundTelegramMessage = {
-                channel: this.props.channel,
-                telegramUser: {
-                    telegramUserId: user.id,
-                    username: user.username,
-                    firstName: user.first_name,
-                    lastName: user.last_name,
-                    languageCode: user.language_code
-                },
-                inputPayload: {tpe: 'TextInput', text, messageId}
-            }
-            await this.selfActor.getParent().send('processInboundTelegramMessage', msg)
-        })
+        try {
+            this.telegraf.on('text', async (ctx) => {
+                const user = ctx.from
+                const messageId = ctx.message.message_id
+                const text = ctx.message.text
+                const msg: tg.InboundTelegramMessage = {
+                    channel: this.props.channel,
+                    telegramUser: {
+                        telegramUserId: user.id,
+                        username: user.username,
+                        firstName: user.first_name,
+                        lastName: user.last_name,
+                        languageCode: user.language_code
+                    },
+                    inputPayload: {tpe: 'TextInput', text, messageId}
+                }
+                await this.selfActor.getParent().send('processInboundTelegramMessage', msg)
+            })
+        }
+        catch (ignore) {}
 
-        this.telegraf.on('callback_query', async (ctx) => {
-            await ctx.telegram.answerCbQuery(ctx.update.callback_query.id)
-            const user = ctx.update.callback_query.from
-            const messageId = ctx.callbackQuery.message?.message_id || 0
-            const data: string = (<any>ctx.update.callback_query).data ?? ''
-            const msg: tg.InboundTelegramMessage = {
-                channel: this.props.channel,
-                telegramUser: {
-                    telegramUserId: user.id,
-                    username: user.username,
-                    firstName: user.first_name,
-                    lastName: user.last_name,
-                    languageCode: user.language_code
-                },
-                inputPayload: {tpe: 'CallbackInput', data, messageId}
-            }
-            await this.selfActor.getParent().send('processInboundTelegramMessage', msg)
-        })
+        try {
+            this.telegraf.on('callback_query', async (ctx) => {
+                await ctx.telegram.answerCbQuery(ctx.update.callback_query.id)
+                const user = ctx.update.callback_query.from
+                const messageId = ctx.callbackQuery.message?.message_id || 0
+                const data: string = (<any>ctx.update.callback_query).data ?? ''
+                const msg: tg.InboundTelegramMessage = {
+                    channel: this.props.channel,
+                    telegramUser: {
+                        telegramUserId: user.id,
+                        username: user.username,
+                        firstName: user.first_name,
+                        lastName: user.last_name,
+                        languageCode: user.language_code
+                    },
+                    inputPayload: {tpe: 'CallbackInput', data, messageId}
+                }
+                await this.selfActor.getParent().send('processInboundTelegramMessage', msg)
+            })
+        }
+        catch (ignore) {}
 
         await this.telegraf.launch()
     }
