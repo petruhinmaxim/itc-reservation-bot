@@ -107,16 +107,28 @@ export default class TelegrafActor {
                 break
 
             case 'EditOutput': {
-                let l10n = this.l10n(msg.userData);
-                const messageId = msg.outputPayload.scene.messageId
-                const text = l10n.getText(msg.outputPayload.scene)
-                const scene = msg.outputPayload.scene
-                await this.telegraf.telegram.editMessageText(
-                    msg.chatId, messageId, undefined, text, {
-                        ...mrk.getMarkup(scene, l10n),
-                        disable_web_page_preview: true,
-                        parse_mode: 'Markdown'
-                    })
+                    let l10n = this.l10n(msg.userData);
+                    const messageId = msg.outputPayload.scene.messageId
+                    const text = l10n.getText(msg.outputPayload.scene)
+                    const scene = msg.outputPayload.scene
+                try {
+                    await this.telegraf.telegram.editMessageText(
+                        msg.chatId, messageId, undefined, text, {
+                            ...mrk.getMarkup(scene, l10n),
+                            disable_web_page_preview: true,
+                            parse_mode: 'Markdown'
+                        })
+                }
+                catch (e) {
+                    await this.telegraf.telegram.sendMessage(
+                        msg.chatId,
+                        text, {
+                            disable_web_page_preview: true,
+                            parse_mode: 'Markdown',
+                            disable_notification: true
+                        }
+                    )
+                }
             }
                 break
 
