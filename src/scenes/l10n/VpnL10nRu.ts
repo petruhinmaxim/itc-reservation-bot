@@ -57,9 +57,9 @@ export class VpnL10nRu implements VpnL10n {
             `3) Обратную связь о качестве работы и благодарность можно оставить нажав на кнопку "Обратная связь"\n \n` +
             `4) [Инструкция](https://www.youtube.com/shorts/GuLgHMi79VU) по настройке автоматического включения VPN при запуске программ на Iphone \n \n` +
 
-            `Администрирование серверов @ASLomonosov \n` +
-            `Архитектурные решения @aaltergot \n` +
-            `Разработка ботов @petruhinMaks \n`
+            `Администрирование @ASLomonosov \n` +
+            `Архитектура @aaltergot \n` +
+            `Разработка @petruhinMaks \n`
             )
     }
 
