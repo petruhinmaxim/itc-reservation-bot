@@ -102,7 +102,10 @@ export default class TelegrafActor {
                 break
 
             case 'DeleteMessageOutput': {
-                await this.telegraf.telegram.deleteMessage(msg.chatId, msg.outputPayload.messageId)
+                try {
+                    await this.telegraf.telegram.deleteMessage(msg.chatId, msg.outputPayload.messageId)
+                }
+                catch (ignore) {}
             }
                 break
 
