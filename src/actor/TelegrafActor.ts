@@ -65,8 +65,8 @@ export default class TelegrafActor {
         }
         catch (ignore) {}
 
-        try {
             this.telegraf.on('callback_query', async (ctx) => {
+                try {
                 await ctx.telegram.answerCbQuery(ctx.update.callback_query.id)
                 const user = ctx.update.callback_query.from
                 const messageId = ctx.callbackQuery.message?.message_id || 0
@@ -83,9 +83,9 @@ export default class TelegrafActor {
                     inputPayload: {tpe: 'CallbackInput', data, messageId}
                 }
                 await this.selfActor.getParent().send('processInboundTelegramMessage', msg)
+                }
+                catch (ignore) {}
             })
-        }
-        catch (ignore) {}
 
         await this.telegraf.launch()
     }
@@ -201,7 +201,6 @@ export default class TelegrafActor {
         }
     }
     catch (ignore) {
-            return
         }
     }
 }
