@@ -76,7 +76,7 @@ export default class LogicActor {
             }
         }
         const userAction: UserAction = {
-            telegramUserId:telegramUserData.telegramUserId,
+            telegramUserId: telegramUserData.telegramUserId,
             actionAt: new Date(),
             scene: vpnUser.currentScene.tpe
         }
@@ -100,10 +100,10 @@ export default class LogicActor {
     }
 
     async processInboundTelegramMessage(msg: tg.InboundTelegramMessage) {
-        const vpnUser: VpnUser = await this.vpnDB.withTransactionIsolation(
-            this.log, 'serializable', true, async con => {
-            return await this.ensureUser(con, msg.telegramUser)
-        })
+        const vpnUser: VpnUser = await this.vpnDB.withTransaction(
+            this.log, async con => {
+                return await this.ensureUser(con, msg.telegramUser)
+            })
 
         await this.vpnDB.withConnection(this.log, async con => {
             switch (msg.inputPayload.tpe) {
@@ -203,16 +203,16 @@ export default class LogicActor {
                 } else {
                     let newUserConfigs: UserConfigs = await this.vpnDB.withTransactionIsolation(
                         this.log, 'serializable', true, async con => {
-                        const userConfigsId: { mobileConfigId: number, pcConfigId: number } =
-                            await this.configRepo.selectUnusedConfigs(con)
-                        mobileConfigId = userConfigsId.mobileConfigId
-                        pcConfigId = userConfigsId.pcConfigId
+                            const userConfigsId: { mobileConfigId: number, pcConfigId: number } =
+                                await this.configRepo.selectUnusedConfigs(con)
+                            mobileConfigId = userConfigsId.mobileConfigId
+                            pcConfigId = userConfigsId.pcConfigId
                             return await this.userConfigsRepo.insertUserConfig(con, {
-                            telegramUserId: user.telegramUserId,
-                            mobileConfigId,
-                            pcConfigId
+                                telegramUserId: user.telegramUserId,
+                                mobileConfigId,
+                                pcConfigId
+                            })
                         })
-                    })
                     if (newUserConfigs) {
                         mobileConfigId = newUserConfigs.mobileConfigId
                         pcConfigId = newUserConfigs.pcConfigId
@@ -277,7 +277,7 @@ export default class LogicActor {
         userData: TelegramUserData,
         payload: tg.TextInput
     ) {
-        if (user.currentScene.tpe == "Feedback" ) {
+        if (user.currentScene.tpe == "Feedback") {
             const userFeedback: UserFeedback = {
                 telegramUserId: user.telegramUserId,
                 feedback: payload.text
@@ -302,8 +302,7 @@ export default class LogicActor {
                 userName: userData.firstName
             }
             await this.vpnUserRepo.upsertVpnUser(con, user)
-        }
-        else {
+        } else {
             // dell user message
             let out: tg.OutputPayload = {
                 tpe: 'DeleteMessageOutput',

@@ -5,7 +5,7 @@ import {UserAction} from '../../model/vpn-user-types'
 export interface UserActionRepository {
     insertAction(
         connection: VpnDBConnection,
-        UserAction: UserAction
+        userAction: UserAction
     ): Promise<UserAction>
 }
 
@@ -22,11 +22,11 @@ class ActionRepositoryImpl implements UserActionRepository {
 
     async insertAction(
         connection: VpnDBConnection,
-        UserAction: UserAction
+        userAction: UserAction
     ): Promise<UserAction> {
         return sql.insertAction(
             await this.clientLocator.ensureClient(connection),
-            UserAction
+            userAction
         )
     }
 }

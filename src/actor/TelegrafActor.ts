@@ -62,11 +62,11 @@ export default class TelegrafActor {
                 }
                 await this.selfActor.getParent().send('processInboundTelegramMessage', msg)
             })
+        } catch (ignore) {
         }
-        catch (ignore) {}
 
-            this.telegraf.on('callback_query', async (ctx) => {
-                try {
+        this.telegraf.on('callback_query', async (ctx) => {
+            try {
                 await ctx.telegram.answerCbQuery(ctx.update.callback_query.id)
                 const user = ctx.update.callback_query.from
                 const messageId = ctx.callbackQuery.message?.message_id || 0
@@ -83,124 +83,123 @@ export default class TelegrafActor {
                     inputPayload: {tpe: 'CallbackInput', data, messageId}
                 }
                 await this.selfActor.getParent().send('processInboundTelegramMessage', msg)
-                }
-                catch (ignore) {}
-            })
+            } catch (ignore) {
+            }
+        })
 
         await this.telegraf.launch()
     }
 
     async processOutboundTelegramMessage(msg: tg.OutboundTelegramMessage) {
         try {
-        if (this.props.channel != msg.channel) return
-        switch (msg.outputPayload.tpe) {
-            case 'SendOutput': {
-                const scene = msg.outputPayload.scene
-                let l10n = this.l10n(msg.userData);
-                const text = l10n.getText(scene)
-                const messageId = await this.telegraf.telegram.sendMessage(msg.chatId, text, {
-                    ...mrk.getMarkup(scene, l10n),
-                    disable_web_page_preview: true,
-                    parse_mode: 'Markdown',
-                    disable_notification: true
-                })
-                msg.outputPayload.scene.messageId = messageId.message_id
-            }
-                break
-
-            case 'DeleteMessageOutput': {
-                await this.telegraf.telegram.deleteMessage(msg.chatId, msg.outputPayload.messageId)
-            }
-                break
-
-            case 'EditOutput': {
-                let l10n = this.l10n(msg.userData);
-                const messageId = msg.outputPayload.scene.messageId
-                const text = l10n.getText(msg.outputPayload.scene)
-                const scene = msg.outputPayload.scene
-                await this.telegraf.telegram.editMessageText(
-                    msg.chatId, messageId, undefined, text, {
-                        ...mrk.getMarkup(scene, l10n),
-                        disable_web_page_preview: true,
-                        parse_mode: 'Markdown'
-                    })
-            }
-                break
-
-            case 'TextOutput':
-                await this.telegraf.telegram.sendMessage(
-                    msg.chatId,
-                    msg.outputPayload.text, {
-                        disable_web_page_preview: true,
-                        parse_mode: 'Markdown',
-                        disable_notification: true
-                    }
-                )
-                break
-
-            case 'SendFile':
-                if (msg.outputPayload.scene.tpe == "GetConfigs") {
-                    const mobileConfigData = msg.outputPayload.scene.mobileConfigData
-                    const pcConfigData = msg.outputPayload.scene.pcConfigData
-                    await fs.writeFileSync(`mobileConfig${msg.chatId}.ovpn`, mobileConfigData)
-                    await fs.writeFileSync(`pcConfig${msg.chatId}.ovpn`, pcConfigData)
-                    await this.telegraf.telegram.sendDocument(
-                        msg.chatId, {
-                            filename: `mobileConfig.ovpn`,
-                            source: `./mobileConfig${msg.chatId}.ovpn`
-                        },
-                        {disable_notification: true}
-                    )
-                    await this.telegraf.telegram.sendDocument(
-                        msg.chatId, {
-                            filename: `pcConfig.ovpn`,
-                            source: `./pcConfig${msg.chatId}.ovpn`
-                        },
-                        {disable_notification: true}
-                    )
-                    fs.unlink(`./mobileConfig${msg.chatId}.ovpn`, err => {
-                    })
-                    fs.unlink(`./pcConfig${msg.chatId}.ovpn`, err => {
-                    })
-                    await this.selfActor.getParent().send("processResendOutboundMessage",
-                        msg)
-                }
-                const scene = msg.outputPayload.scene.tpe
-                if (scene == "IphoneInstruction" || scene == "MacInstruction" ||
-                    scene == "AndroidInstruction" || scene == "WindowsInstruction"
-                ) {
-                    await this.telegraf.telegram.sendVideo(
-                        msg.chatId, {
-                            filename: msg.outputPayload.scene.filename,
-                            source: msg.outputPayload.scene.source,
-                        }, {
-                            disable_notification: true
-                        }
-                    )
-                    await this.selfActor.getParent().send("processResendOutboundMessage",
-                        msg)
-                }
-                break
-
-            case 'SendAdminMassage':
-                if (msg.outputPayload.scene.tpe == "SendMassageToUser") {
+            if (this.props.channel != msg.channel) return
+            switch (msg.outputPayload.tpe) {
+                case 'SendOutput': {
                     const scene = msg.outputPayload.scene
                     let l10n = this.l10n(msg.userData);
                     const text = l10n.getText(scene)
-                    await this.telegraf.telegram.sendMessage(
-                        msg.chatId,
-                        text, {
+                    const messageId = await this.telegraf.telegram.sendMessage(msg.chatId, text, {
+                        ...mrk.getMarkup(scene, l10n),
+                        disable_web_page_preview: true,
+                        parse_mode: 'Markdown',
+                        disable_notification: true
+                    })
+                    msg.outputPayload.scene.messageId = messageId.message_id
+                }
+                    break
+
+                case 'DeleteMessageOutput': {
+                    await this.telegraf.telegram.deleteMessage(msg.chatId, msg.outputPayload.messageId)
+                }
+                    break
+
+                case 'EditOutput': {
+                    let l10n = this.l10n(msg.userData);
+                    const messageId = msg.outputPayload.scene.messageId
+                    const text = l10n.getText(msg.outputPayload.scene)
+                    const scene = msg.outputPayload.scene
+                    await this.telegraf.telegram.editMessageText(
+                        msg.chatId, messageId, undefined, text, {
                             ...mrk.getMarkup(scene, l10n),
                             disable_web_page_preview: true,
+                            parse_mode: 'Markdown'
+                        })
+                }
+                    break
+
+                case 'TextOutput':
+                    await this.telegraf.telegram.sendMessage(
+                        msg.chatId,
+                        msg.outputPayload.text, {
+                            disable_web_page_preview: true,
                             parse_mode: 'Markdown',
-                            disable_notification: false
+                            disable_notification: true
                         }
                     )
                     break
-                }
-        }
-    }
-    catch (ignore) {
+
+                case 'SendFile':
+                    if (msg.outputPayload.scene.tpe == "GetConfigs") {
+                        const mobileConfigData = msg.outputPayload.scene.mobileConfigData
+                        const pcConfigData = msg.outputPayload.scene.pcConfigData
+                        await fs.writeFileSync(`mobileConfig${msg.chatId}.ovpn`, mobileConfigData)
+                        await fs.writeFileSync(`pcConfig${msg.chatId}.ovpn`, pcConfigData)
+                        await this.telegraf.telegram.sendDocument(
+                            msg.chatId, {
+                                filename: `mobileConfig.ovpn`,
+                                source: `./mobileConfig${msg.chatId}.ovpn`
+                            },
+                            {disable_notification: true}
+                        )
+                        await this.telegraf.telegram.sendDocument(
+                            msg.chatId, {
+                                filename: `pcConfig.ovpn`,
+                                source: `./pcConfig${msg.chatId}.ovpn`
+                            },
+                            {disable_notification: true}
+                        )
+                        fs.unlink(`./mobileConfig${msg.chatId}.ovpn`, err => {
+                        })
+                        fs.unlink(`./pcConfig${msg.chatId}.ovpn`, err => {
+                        })
+                        await this.selfActor.getParent().send("processResendOutboundMessage",
+                            msg)
+                    }
+                    const scene = msg.outputPayload.scene.tpe
+                    if (scene == "IphoneInstruction" || scene == "MacInstruction" ||
+                        scene == "AndroidInstruction" || scene == "WindowsInstruction"
+                    ) {
+                        await this.telegraf.telegram.sendVideo(
+                            msg.chatId, {
+                                filename: msg.outputPayload.scene.filename,
+                                source: msg.outputPayload.scene.source,
+                            }, {
+                                disable_notification: true
+                            }
+                        )
+                        await this.selfActor.getParent().send("processResendOutboundMessage",
+                            msg)
+                    }
+                    break
+
+                case 'SendAdminMassage':
+                    if (msg.outputPayload.scene.tpe == "SendMassageToUser") {
+                        const scene = msg.outputPayload.scene
+                        let l10n = this.l10n(msg.userData);
+                        const text = l10n.getText(scene)
+                        await this.telegraf.telegram.sendMessage(
+                            msg.chatId,
+                            text, {
+                                ...mrk.getMarkup(scene, l10n),
+                                disable_web_page_preview: true,
+                                parse_mode: 'Markdown',
+                                disable_notification: false
+                            }
+                        )
+                        break
+                    }
+            }
+        } catch (ignore) {
         }
     }
 }
