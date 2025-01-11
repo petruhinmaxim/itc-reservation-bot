@@ -1,39 +1,5 @@
 import { Scene } from './scene-types'
 
-export type VpnUser = {
-  telegramUserId: number
-  currentScene: Scene
-}
-
-export type VpnConfig = {
-  configId: number
-  configName: string
-  serverId: number
-  configData: string
-}
-
-export type UserConfigs = {
-    telegramUserId: number,
-    mobileConfigId: number,
-    pcConfigId: number
-}
-
-export type UserFeedback = {
-  telegramUserId: number,
-  feedback: string
-}
-
-export type UserAction = {
-  telegramUserId: number,
-  actionAt?: Date,
-  scene: string
-}
-
-export type VpnServer = {
-  serverId: number
-  serverName: string
-}
-
 export type TelegramUserData = {
   telegramUserId: number
   username?: string
@@ -52,3 +18,58 @@ export function telegramUserEquals(
     && a.lastName === b.lastName
     && a.languageCode === b.languageCode
 }
+
+export type VpnUser = {
+  telegramUserId: number
+  currentScene: Scene
+}
+
+export type UserAccess = {
+  telegram_user_id: number
+  start_trial_time: Date
+  user_access: boolean
+}
+
+export type ServerReservation = {
+  reservation_date: string
+  reservation_time: string
+  telegram_user_id?: number
+}
+
+
+export type UserAction = {
+  telegramUserId: number,
+  actionAt?: Date,
+  scene: string
+}
+
+export type UserFeedback = {
+  telegramUserId: number,
+  feedback: string
+}
+
+//____________________
+
+
+
+export type UserConfigs = {
+    telegramUserId: number,
+    mobileConfigId: number,
+    pcConfigId: number
+}
+
+
+
+export type VpnServer = {
+  serverId: number
+  serverName: string
+}
+
+export type VpnConfig = {
+  configId: number
+  configName: string
+  serverId: number
+  configData: string
+}
+
+

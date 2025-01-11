@@ -1,3 +1,5 @@
 node_modules/
+flyway/
 .idea/
 src/config/local-config.js
+yarn.lock
