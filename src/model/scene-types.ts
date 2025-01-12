@@ -1,7 +1,7 @@
 export type Scene =
     Start | DeleteMassage | IphoneInstruction | MacInstruction |
     AndroidInstruction | WindowsInstruction | GetConfigs | GeneralInfo |
-    SendMassageToUser | Feedback
+    SendMassageToUser | Feedback | Instruction | ReservationNow | ReservationByDate
 
 export type Start =  {
   tpe: 'Start'
@@ -13,6 +13,22 @@ export type DeleteMassage =  {
   tpe: 'DeleteMassage'
   messageId?: number
 }
+
+export type ReservationNow = {
+  tpe: 'ReservationNow',
+  messageId?: number
+}
+
+export type ReservationByDate = {
+  tpe: 'ReservationByDate',
+  messageId?: number
+}
+
+export type Instruction = {
+  tpe: 'Instruction',
+  messageId?: number
+}
+
 
 export type IphoneInstruction =  {
   tpe: 'IphoneInstruction'

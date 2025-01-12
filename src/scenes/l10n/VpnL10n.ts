@@ -12,4 +12,7 @@ export interface VpnL10n {
   goToGeneralInfo():string
   goToGetConfigs():string
   goToFeedback():string
+  goToReservationNow():string
+  goToReservationByDate():string
+  goToInstruction():string
 }

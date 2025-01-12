@@ -3,7 +3,8 @@ CREATE TABLE IF NOT EXISTS telegram_user_data (
   user_name TEXT,
   first_name TEXT,
   last_name TEXT,
-  language_code TEXT
+  language_code TEXT,
+  user_comment TEXT
 );
 CREATE INDEX IF NOT EXISTS telegram_user_data_telegram_user_id_idx ON telegram_user_data(telegram_user_id);
 

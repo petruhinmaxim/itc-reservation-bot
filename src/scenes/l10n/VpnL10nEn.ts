@@ -54,6 +54,23 @@ export class VpnL10nEn implements VpnL10n {
             'Скачать конфиги'
         )
     }
+    goToReservationNow():string {
+        return escapeString(
+            'Скачать конфиги'
+        )
+    }
+
+    goToReservationByDate():string {
+        return escapeString(
+            'Скачать конфиги'
+        )
+    }
+
+    goToInstruction():string {
+        return escapeString(
+            'Инструкция и правила'
+        )
+    }
 
     getText(scene: s.Scene): string {
         let text = ''

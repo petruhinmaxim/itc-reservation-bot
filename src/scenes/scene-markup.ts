@@ -9,11 +9,9 @@ export function getMarkup(scene: s.Scene, l10n: VpnL10n):
   let markup: Markup.Markup<InlineKeyboardMarkup>
   switch (scene.tpe) {
     case 'Start':
-      buttons.push([getConfigs(l10n)])
-      buttons.push([getIphoneInstruction(l10n), getMacInstruction(l10n)])
-      buttons.push([getAndroidInstruction(l10n), getWindowsInstruction(l10n)])
-      buttons.push([getGeneralInfo(l10n)])
-      buttons.push([getFeedback(l10n)])
+      buttons.push([getReservationNow(l10n)])
+      buttons.push([getReservationByDate(l10n)])
+      buttons.push([getInstruction(l10n)])
       break
     case "IphoneInstruction":
       buttons.push([getStartButton(l10n)])
@@ -37,6 +35,8 @@ export function getMarkup(scene: s.Scene, l10n: VpnL10n):
       buttons.push([getFeedback(l10n)])
       buttons.push([getStartButton(l10n)])
       break
+    case "Instruction":
+      buttons.push([getStartButton(l10n)])
   }
   markup = Markup.inlineKeyboard(buttons)
   return markup
@@ -73,6 +73,18 @@ function getFeedback(l10n: VpnL10n) {
 
 function getConfigs(l10n: VpnL10n) {
   return Markup.button.callback(l10n.goToGetConfigs(), markupDataGen('GetConfigs'))
+}
+
+function getReservationNow(l10n: VpnL10n) {
+  return Markup.button.callback(l10n.goToReservationNow(), markupDataGen('ReservationNow'))
+}
+
+function getReservationByDate(l10n: VpnL10n) {
+  return Markup.button.callback(l10n.goToReservationByDate(), markupDataGen('ReservationByDate'))
+}
+
+function getInstruction(l10n: VpnL10n) {
+  return Markup.button.callback(l10n.goToInstruction(), markupDataGen('Instruction'))
 }
 
 

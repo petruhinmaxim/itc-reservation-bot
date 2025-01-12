@@ -240,6 +240,13 @@ export default class LogicActor {
                 }
                 break
             }
+            case 'Instruction': {
+                user.currentScene = {
+                    tpe: "Instruction",
+                    messageId: payload.messageId
+                }
+                break
+            }
             case 'Feedback': {
                 user.currentScene = {
                     tpe: "Feedback",
