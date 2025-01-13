@@ -3,7 +3,7 @@ import { ServerReservation } from "./vpn-user-types"
 export type Scene =
   Start | DeleteMassage | IphoneInstruction | MacInstruction |
   AndroidInstruction | WindowsInstruction | GetConfigs | GeneralInfo |
-  SendMassageToUser | Feedback | Instruction | ReservationNow | ReservationByDate | ServerBlock
+  SendMassageToUser | Feedback | Instruction | ReservationNow | ReservationByDate | ServerBlock | DeleteMyReservation
 
 export type Start = {
   tpe: 'Start'
@@ -38,6 +38,12 @@ export type Instruction = {
 
 export type ServerBlock = {
   tpe: 'ServerBlock',
+  messageId?: number,
+  
+}
+
+export type DeleteMyReservation = {
+  tpe: 'DeleteMyReservation',
   messageId?: number,
   
 }

@@ -436,7 +436,7 @@ export default class LogicActor {
                             if (reservations[i].telegramUserId != 0 && !lastActiveReservation) {
                                 lastActiveReservation = reservations[i]
                             }
-                            if(reservations[i].telegramUserId == userData.telegramUserId) {
+                            if (reservations[i].telegramUserId == userData.telegramUserId) {
                                 myReservation = reservations[i]
                             }
                         }
@@ -496,6 +496,59 @@ export default class LogicActor {
                     }
                 }
                 break
+            }
+
+            case 'DeleteMyReservation': {
+                const moscowOffset = 3 * 60
+                const now = new Date();
+                const moscowTime = new Date(now.getTime() + (now.getTimezoneOffset() + moscowOffset) * 60000);
+
+                const dayTodat = String(moscowTime.getDate()).padStart(2, '0');
+                const monthToday = String(moscowTime.getMonth() + 1).padStart(2, '0');
+                let dateToday = `${dayTodat}.${monthToday}`;
+                const intervalTyme = getTimeInterval()
+                let serverReservation: ServerReservation | undefined
+                await this.vpnDB.withConnection(this.log, async con => {
+                    serverReservation = await this.serverReservationRepo.selectReservationBy(con, dateToday, intervalTyme)
+                })
+
+                let reservations: ServerReservation[] | undefined
+                let reservationId: number = 0
+                if (serverReservation?.reservetionID) reservationId = serverReservation.reservetionID
+
+                await this.vpnDB.withConnection(this.log, async con => {
+                    reservations = await this.serverReservationRepo.selectLastDaysReservations(con, reservationId)
+
+                    if (reservations?.length) {
+                        for (let i = reservations?.length - 1; i >= 0; i--) {
+                            if (reservations[i].telegramUserId == userData.telegramUserId) {
+                                let resevationIDTodelete = reservations[i].reservetionID
+                                let reservationTelegramIDTosave = reservations[i].telegramUserId
+                                if (resevationIDTodelete && reservationTelegramIDTosave) {
+                                    let updReservationID: number = resevationIDTodelete
+                                    let updTelegramId:number = reservationTelegramIDTosave
+                                    await this.vpnDB.withConnection(this.log, async con => {
+                                        serverReservation = await this.serverReservationRepo.changeUserReservation(con, 0, updReservationID, updTelegramId)
+                                    })
+                                }
+                            }
+                        }
+                    }
+                })
+                user.currentScene = {
+                    tpe: "DeleteMyReservation",
+                    messageId: payload.messageId
+                }
+                break
+
+
+                //TODO получить мои брони на период вперед
+                // заменить ID на равное нулю
+                // загрузить обновление в базу (метод уже есть)
+                // сохранить удаленное обновление брони. НУЖНА СТАТА. Для этого нужно передалать модель
+
+
+
             }
 
             case 'IphoneInstruction': {

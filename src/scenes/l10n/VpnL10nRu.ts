@@ -39,7 +39,7 @@ export class VpnL10nRu implements VpnL10n {
                 `Я помогу тебе забронировать и получить доступ к серверу с покерными тренажерами. Для этого выбери удобное для тебя время в разделе «Забронировать по времени» или нажми на кнопку «Забронировать сейчас», если сервер свободен \n` +
                 `Обрати внимание, что работа ведется по московскому времени, а интервал бронирования равен двум часам \n` +
                 `Не забудь ознакомиться с инструкцией и правилами работы на сервере \n \n` +
-                `Статус сервера ${status} до ${date} ${tyme} МСК \n` +
+                `Статус сервера: ${status} до ${date} ${tyme} МСК \n` +
                 this.addMyReservationInfo(scene.myReservation)
         }
         else {
@@ -47,12 +47,12 @@ export class VpnL10nRu implements VpnL10n {
                 `Я помогу тебе забронировать и получить доступ к серверу с покерными тренажерами. Для этого выбери удобное для тебя время в разделе «Забронировать по времени» или нажми на кнопку «Забронировать сейчас», если сервер свободен \n` +
                 `Обрати внимание, что работа ведется по московскому времени, а интервал бронирования равен двум часам \n` +
                 `Не забудь ознакомиться с инструкцией и правилами работы на сервере \n \n` +
-                `Статус сервера ${status}  \n` +
+                `Статус сервера: ${status}  \n` +
                 this.addMyReservationInfo(scene.myReservation)
         }
     }
-    addMyReservationInfo(reservation:ServerReservation |undefined) {
-        if(!reservation) {
+    addMyReservationInfo(reservation: ServerReservation | undefined) {
+        if (!reservation) {
             return "Мое бронирование: отсутствует"
         }
         else {
@@ -127,6 +127,12 @@ export class VpnL10nRu implements VpnL10n {
     reservationNow(scene: s.ReservationNow): string {
         return (`Сервер успешно забронирован. Дата: ${scene.myReservation?.reservationDate} Время: ${scene.myReservation?.reservationTime}`)
     }
+
+    deleteMyReservation(scene: s.DeleteMyReservation): string {
+        return (`Бронирование сервера отменено`)
+    }
+
+    
 
     serverBlock(scene: s.ServerBlock): string {
         return (`Сервер сейчас занят, выберите бронирование по времени`)
@@ -210,6 +216,15 @@ export class VpnL10nRu implements VpnL10n {
         )
     }
 
+    goToDeleteMyReservation(): string {
+        return escapeString(
+            `Отменить бронирование`
+        )
+    }
+
+
+
+
     getText(scene: s.Scene): string {
         let text = ``
         switch (scene.tpe) {
@@ -245,6 +260,11 @@ export class VpnL10nRu implements VpnL10n {
                 break
             case "ServerBlock":
                 text = this.serverBlock(scene)
+                break
+            case "DeleteMyReservation":
+                text = this.deleteMyReservation(scene)
+                break
+
 
         }
         return text

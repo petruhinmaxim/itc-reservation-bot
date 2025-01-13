@@ -11,6 +11,7 @@ export function getMarkup(scene: s.Scene, l10n: VpnL10n):
     case 'Start':
       buttons.push([getReservationNow(l10n)])
       buttons.push([getReservationByDate(l10n)])
+      buttons.push([getDeleteMyReservation(l10n)])
       buttons.push([getInstruction(l10n)])
       break
     case "Instruction":
@@ -20,6 +21,9 @@ export function getMarkup(scene: s.Scene, l10n: VpnL10n):
       buttons.push([getStartButton(l10n)])
       break
     case "ServerBlock":
+      buttons.push([getStartButton(l10n)])
+      break
+    case "DeleteMyReservation":
       buttons.push([getStartButton(l10n)])
       break
     case "IphoneInstruction":
@@ -92,6 +96,10 @@ function getReservationByDate(l10n: VpnL10n) {
 
 function getInstruction(l10n: VpnL10n) {
   return Markup.button.callback(l10n.goToInstruction(), markupDataGen('Instruction'))
+}
+
+function getDeleteMyReservation(l10n: VpnL10n) {
+  return Markup.button.callback(l10n.goToDeleteMyReservation(), markupDataGen('DeleteMyReservation'))
 }
 
 

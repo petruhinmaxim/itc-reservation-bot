@@ -15,4 +15,5 @@ export interface VpnL10n {
   goToReservationNow():string
   goToReservationByDate():string
   goToInstruction():string
+  goToDeleteMyReservation():string
 }

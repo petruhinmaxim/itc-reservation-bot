@@ -72,6 +72,12 @@ export class VpnL10nEn implements VpnL10n {
         )
     }
 
+    goToDeleteMyReservation(): string {
+        return escapeString(
+            `Отменить бронирование`
+        )
+    }
+
     getText(scene: s.Scene): string {
         let text = ''
         switch (scene.tpe) {
