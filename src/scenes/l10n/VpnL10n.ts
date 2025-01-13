@@ -16,4 +16,7 @@ export interface VpnL10n {
   goToReservationByDate():string
   goToInstruction():string
   goToDeleteMyReservation():string
+  goToDateSlot1(scene: Scene):string
+  goToDateSlot2(scene: Scene):string
+  goToDateSlot3(scene: Scene):string
 }

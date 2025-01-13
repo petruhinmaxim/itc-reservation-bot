@@ -132,12 +132,15 @@ export class VpnL10nRu implements VpnL10n {
         return (`Бронирование сервера отменено`)
     }
 
-    
+
 
     serverBlock(scene: s.ServerBlock): string {
         return (`Сервер сейчас занят, выберите бронирование по времени`)
     }
 
+    reservationByDate(scene: s.ReservationByDate): string {
+        return (`Выберите дату для бронирования сервера`)
+    }
 
 
     sendMassageToUser(scene: s.SendMassageToUser): string {
@@ -222,6 +225,38 @@ export class VpnL10nRu implements VpnL10n {
         )
     }
 
+    goToDateSlot1(scene: s.Scene): string {
+        if (scene.tpe == "ReservationByDate")
+            return escapeString(
+                `${scene.dateSlot1}`
+            )
+        else {
+            return ""
+        }
+    }
+
+    goToDateSlot2(scene: s.Scene): string {
+        if (scene.tpe == "ReservationByDate")
+            return escapeString(
+                `${scene.dateSlot2}`
+            )
+        else {
+            return ""
+        }
+    }
+
+    goToDateSlot3(scene: s.Scene): string {
+        if (scene.tpe == "ReservationByDate")
+            return escapeString(
+                `${scene.dateSlot3}`
+            )
+        else {
+            return ""
+        }
+    }
+
+
+
 
 
 
@@ -263,6 +298,9 @@ export class VpnL10nRu implements VpnL10n {
                 break
             case "DeleteMyReservation":
                 text = this.deleteMyReservation(scene)
+                break
+            case "ReservationByDate":
+                text = this.reservationByDate(scene)
                 break
 
 

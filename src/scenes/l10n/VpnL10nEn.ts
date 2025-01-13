@@ -1,4 +1,4 @@
-import {VpnL10n} from './VpnL10n'
+import { VpnL10n } from './VpnL10n'
 import * as s from '../../model/scene-types'
 import {
     escapeString
@@ -11,7 +11,7 @@ export class VpnL10nEn implements VpnL10n {
         )
     }
 
-//navigation
+    //navigation
     goToMainMenu(): string {
         return escapeString(
             'Главное меню'
@@ -54,19 +54,19 @@ export class VpnL10nEn implements VpnL10n {
             'Скачать конфиги'
         )
     }
-    goToReservationNow():string {
+    goToReservationNow(): string {
         return escapeString(
             'Скачать конфиги'
         )
     }
 
-    goToReservationByDate():string {
+    goToReservationByDate(): string {
         return escapeString(
             'Скачать конфиги'
         )
     }
 
-    goToInstruction():string {
+    goToInstruction(): string {
         return escapeString(
             'Инструкция и правила'
         )
@@ -76,6 +76,36 @@ export class VpnL10nEn implements VpnL10n {
         return escapeString(
             `Отменить бронирование`
         )
+    }
+
+    goToDateSlot1(scene: s.Scene): string {
+        if (scene.tpe == "ReservationByDate")
+            return escapeString(
+                `${scene.dateSlot1}`
+            )
+        else {
+            return ""
+        }
+    }
+
+    goToDateSlot2(scene: s.Scene): string {
+        if (scene.tpe == "ReservationByDate")
+            return escapeString(
+                `${scene.dateSlot2}`
+            )
+        else {
+            return ""
+        }
+    }
+
+    goToDateSlot3(scene: s.Scene): string {
+        if (scene.tpe == "ReservationByDate")
+            return escapeString(
+                `${scene.dateSlot3}`
+            )
+        else {
+            return ""
+        }
     }
 
     getText(scene: s.Scene): string {

@@ -13,7 +13,7 @@ import {
 import { VpnDB, VpnDBConnection } from '../db/VpnDB'
 import { makeTelegramUserDataRepository, TelegramUserDataRepository } from '../db/repository/TelegramUserDataRepository'
 import { makeVpnUserRepository, VpnUserRepository } from "../db/repository/VpnUserRepository"
-import { markupDataParseSceneTpe } from '../scenes/scene-markup'
+import { markupDataParseActionInScene, markupDataParseSceneTpe } from '../scenes/scene-markup'
 import { ConfigRepository, makeConfigRepository } from "../db/repository/ConfigRepository"
 import { makeUserConfigRepository, UserConfigRepository } from "../db/repository/UserConfigRepository"
 import { OutputPayload } from "../model/telegram-massege-types"
@@ -539,15 +539,30 @@ export default class LogicActor {
                     messageId: payload.messageId
                 }
                 break
+            }
 
+            case 'ReservationByDate': {
+                user.currentScene = {
+                    tpe: "ReservationByDate",
+                    messageId: payload.messageId,
+                    dateSlot1: "111",
+                    dateSlot2: "222",
+                    dateSlot3: "333",
+                }
+                break
+            }
 
-                //TODO получить мои брони на период вперед
-                // заменить ID на равное нулю
-                // загрузить обновление в базу (метод уже есть)
-                // сохранить удаленное обновление брони. НУЖНА СТАТА. Для этого нужно передалать модель
-
-
-
+            case 'ReservationByTime': {
+                console.log("ACtion" + markupDataParseActionInScene(payload.data))
+                user.currentScene = {
+                    tpe: "ReservationByTime",
+                    messageId: payload.messageId,
+                    timeSlot1: "10:00",
+                    timeSlot2: "11:00",
+                    timeSlot3: "12:00",
+                    dateSlot: markupDataParseActionInScene(payload.data)
+                }
+                break
             }
 
             case 'IphoneInstruction': {
