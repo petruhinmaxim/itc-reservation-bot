@@ -1,22 +1,28 @@
-export type Scene =
-    Start | DeleteMassage | IphoneInstruction | MacInstruction |
-    AndroidInstruction | WindowsInstruction | GetConfigs | GeneralInfo |
-    SendMassageToUser | Feedback | Instruction | ReservationNow | ReservationByDate
+import { ServerReservation } from "./vpn-user-types"
 
-export type Start =  {
+export type Scene =
+  Start | DeleteMassage | IphoneInstruction | MacInstruction |
+  AndroidInstruction | WindowsInstruction | GetConfigs | GeneralInfo |
+  SendMassageToUser | Feedback | Instruction | ReservationNow | ReservationByDate | ServerBlock
+
+export type Start = {
   tpe: 'Start'
   messageId?: number
   userName?: string
+  myReservation?: ServerReservation
+  lustReservation?: ServerReservation
+  serverStatus?: boolean
 }
 
-export type DeleteMassage =  {
+export type DeleteMassage = {
   tpe: 'DeleteMassage'
   messageId?: number
 }
 
 export type ReservationNow = {
   tpe: 'ReservationNow',
-  messageId?: number
+  messageId?: number,
+  myReservation?: ServerReservation
 }
 
 export type ReservationByDate = {
@@ -29,55 +35,61 @@ export type Instruction = {
   messageId?: number
 }
 
+export type ServerBlock = {
+  tpe: 'ServerBlock',
+  messageId?: number,
+  
+}
 
-export type IphoneInstruction =  {
+
+export type IphoneInstruction = {
   tpe: 'IphoneInstruction'
   messageId?: number
   filename: string
   source: string
 }
 
-export type MacInstruction =  {
+export type MacInstruction = {
   tpe: 'MacInstruction'
   messageId?: number
   filename: string
   source: string
 }
 
-export type AndroidInstruction =  {
+export type AndroidInstruction = {
   tpe: 'AndroidInstruction'
   messageId?: number
   filename: string
   source: string
 }
 
-export type WindowsInstruction =  {
+export type WindowsInstruction = {
   tpe: 'WindowsInstruction'
   messageId?: number
   filename: string
   source: string
 }
 
-export type GetConfigs =  {
+export type GetConfigs = {
   tpe: 'GetConfigs'
   messageId?: number
   mobileConfigData: string
   pcConfigData: string
 }
 
-export type GeneralInfo =  {
+export type GeneralInfo = {
   tpe: 'GeneralInfo'
   messageId?: number
 }
 
-export type SendMassageToUser =  {
+export type SendMassageToUser = {
   tpe: 'SendMassageToUser'
   messageId?: number
   userName?: string
   text: string
 }
 
-export type Feedback =  {
+export type Feedback = {
   tpe: 'Feedback'
   messageId?: number
 }

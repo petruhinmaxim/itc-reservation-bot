@@ -54,7 +54,6 @@ export default class LogicActor {
         this.log.info('init')
 
         async () => {
-            console.log("INIT SLOTS")
             const lustReservation = await this.vpnDB.withTransaction(
                 this.log, async con => {
                     return await this.serverReservationRepo.selectLastReservation(con)
@@ -120,7 +119,7 @@ export default class LogicActor {
             }
         }
 
-        setInterval( async () => {
+        setInterval(async () => {
             console.log("INIT SLOTS")
             const lustReservation = await this.vpnDB.withTransaction(
                 this.log, async con => {
@@ -186,7 +185,7 @@ export default class LogicActor {
                 }
             }
         }
-        , 20000)
+            , 20000)
 
         async function insertServerReservationsByDate(dateForInsert: string, vpnDB: VpnDB, log: Logger, serverReservationRepo: ServerReservationRepository) {
             let serverReservation: ServerReservation = {
@@ -390,6 +389,7 @@ export default class LogicActor {
         })
     }
 
+
     private async processMainCallback(
         con: VpnDBConnection,
         user: VpnUser,
@@ -399,6 +399,7 @@ export default class LogicActor {
         const sceneTpeInCallbackData = markupDataParseSceneTpe(payload.data)
         switch (sceneTpeInCallbackData) {
             case 'Start': {
+                //TODO получение информации о статусе сервера и времени бронирования 
                 user.currentScene = {
                     tpe: "Start",
                     messageId: payload.messageId,
@@ -407,10 +408,48 @@ export default class LogicActor {
                 break
             }
             case 'ReservationNow': {
-                user.currentScene = {
-                    tpe: "ReservationNow",
-                    messageId: payload.messageId,
+                const moscowOffset = 3 * 60
+                const now = new Date();
+                const moscowTime = new Date(now.getTime() + (now.getTimezoneOffset() + moscowOffset) * 60000);
+
+                const dayTodat = String(moscowTime.getDate()).padStart(2, '0');
+                const monthToday = String(moscowTime.getMonth() + 1).padStart(2, '0');
+                let dateToday = `${dayTodat}.${monthToday}`;
+
+                const intervalTyme = getTimeInterval()
+
+                const reservation = {
+                    reservationDate: dateToday,
+                    reservationTime: intervalTyme
                 }
+
+                let servarReservation: ServerReservation | undefined
+
+                // TODO получить запись в таблице и протестить
+                await this.vpnDB.withConnection(this.log, async con => {
+                    servarReservation = await this.serverReservationRepo.selectReservationBy(con, dateToday, intervalTyme)
+                })
+
+                if (servarReservation?.telegramUserId == 0 && servarReservation && servarReservation.reservetionID) {
+                    let reservationId = servarReservation.reservetionID
+                    await this.vpnDB.withConnection(this.log, async con => {
+                        servarReservation = await this.serverReservationRepo.addUserReservation(con, userData.telegramUserId, reservationId)
+                    })
+
+                    user.currentScene = {
+                        tpe: "ReservationNow",
+                        messageId: payload.messageId,
+                        myReservation: reservation
+                    }
+
+                }
+                else {
+                    user.currentScene = {
+                        tpe: "ServerBlock",
+                        messageId: payload.messageId
+                    }
+                }
+                //TODO бронирование 
                 break
             }
 
@@ -558,7 +597,22 @@ export default class LogicActor {
         }
         await this.vpnUserRepo.upsertVpnUser(con, user)
         await this.sendToUser(user, out)
+
+        function getTimeInterval() {
+            const now = new Date();
+            const moscowOffset = 3 * 60; // Смещение Москвы от UTC в минутах (UTC+3)
+            const localTime = new Date(now.getTime() + now.getTimezoneOffset() * 60000 + moscowOffset * 60000);
+            const hours = localTime.getHours()
+            const intervalStart = Math.floor(hours / 2) * 2;
+            let intervalEnd = intervalStart + 2;
+            if (intervalStart == 22) {
+                intervalEnd = 0;
+            }
+            let interval = `${String(intervalStart).padStart(2, '0')}:00 - ${String(intervalEnd).padStart(2, '0')}:00 МСК`;
+            return interval
+        }
     }
+
 
     private async processMainText(
         con: VpnDBConnection,
@@ -640,6 +694,8 @@ export default class LogicActor {
         }
     }
 
+
+
     async processResendOutboundMessage(msg: tg.OutboundTelegramMessage) {
         let user: VpnUser | undefined
         let userData: TelegramUserData | undefined
@@ -671,3 +727,4 @@ export default class LogicActor {
         }
     }
 }
+

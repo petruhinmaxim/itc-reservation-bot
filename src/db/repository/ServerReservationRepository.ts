@@ -8,14 +8,28 @@ export interface ServerReservationRepository {
         serverReservation: ServerReservation
     ): Promise<ServerReservation>
 
-    selectConfigsById(
+    selectReservationBy(
         connection: VpnDBConnection,
-        telegramUserId: number
+        reservationDate: string,
+        reservationTime:string
     ): Promise<ServerReservation | undefined>
 
     selectLastReservation(
         connection: VpnDBConnection
     ): Promise<ServerReservation | undefined>
+
+    addReservation(
+        connection: VpnDBConnection,
+        telegramUserId: number
+    ): Promise<ServerReservation | undefined>
+
+    addUserReservation(
+        connection: VpnDBConnection,
+        telegramUserId: number,
+        reservationID: number
+    ): Promise<ServerReservation | undefined>
+
+
 }
 
 export function makeServerReservationRepository(db: VpnDB): ServerReservationRepository {
@@ -39,13 +53,15 @@ class ServerReservationRepositoryImpl implements ServerReservationRepository {
         )
     }
 
-    async selectConfigsById(
+    async selectReservationBy(
         connection: VpnDBConnection,
-        telegramUserId: number
+        reservationDate: string,
+        reservationTime:string
     ): Promise<ServerReservation | undefined> {
-        return sql.selectConfigsById(
+        return sql.selectReservationBy(
             await this.clientLocator.ensureClient(connection),
-            telegramUserId
+            reservationDate,
+            reservationTime
         )
     }
 
@@ -57,6 +73,28 @@ class ServerReservationRepositoryImpl implements ServerReservationRepository {
         )
     }
 
+    async addReservation(
+        connection: VpnDBConnection,
+        telegramUserId: number
+    ): Promise<ServerReservation | undefined> {
+        return sql.addReservation(
+            await this.clientLocator.ensureClient(connection),
+            telegramUserId
+        )
+    }
+
+    async addUserReservation(
+        connection: VpnDBConnection,
+        telegramUserId: number,
+        reservationID: number
+    ): Promise<ServerReservation | undefined> {
+        return sql.addUserReservation(
+            await this.clientLocator.ensureClient(connection),
+            telegramUserId,
+            reservationID
+        )
+    }
+
 
 }
 
@@ -64,6 +102,7 @@ class ServerReservationRepositoryImpl implements ServerReservationRepository {
 namespace sql {
     function serverReservationRowMapping(row: QueryResultRow): ServerReservation {
         return {
+            reservetionID: Number(row.id),
             reservationDate: String(row.reservation_date),
             reservationTime: String(row.reservation_time),
             telegramUserId: Number(row.telegram_user_id)
@@ -88,15 +127,17 @@ namespace sql {
         }
     }
 
-    export async function selectConfigsById(
+    export async function selectReservationBy(
         client: ClientBase,
-        telegramUserId: number
+        reservationDate: string,
+        reservationTime: string
     ): Promise<ServerReservation | undefined> {
         const res = await client.query(
             `SELECT *
-             FROM user_vpn_config
-             WHERE telegram_user_id = $1`,
-            [telegramUserId]
+             FROM server_reservation
+             WHERE reservation_date = $1
+                AND reservation_time = $2`,
+            [reservationDate, reservationTime]
         )
         return res.rows.map(serverReservationRowMapping).shift()
     }
@@ -112,4 +153,36 @@ namespace sql {
         )
         return res.rows.map(serverReservationRowMapping).shift()
     }
+
+    export async function addReservation( //TODO
+        client: ClientBase,
+        telegramUserId: number
+    ): Promise<ServerReservation | undefined> {
+        const res = await client.query(
+            `SELECT *
+             FROM user_vpn_config
+             WHERE telegram_user_id = $1`,
+            [telegramUserId]
+        )
+        return res.rows.map(serverReservationRowMapping).shift()
+    }
+
+    export async function addUserReservation( 
+        client: ClientBase,
+        telegramUserId: number,
+        reservationID: number
+    ): Promise<ServerReservation | undefined> {
+        const res = await client.query(
+            `UPDATE server_reservation 
+             SET telegram_user_id = $1
+             WHERE id = $2`,
+            [telegramUserId, reservationID]
+        )
+        return res.rows.map(serverReservationRowMapping).shift()
+    }
+
+
+
+
+    
 }

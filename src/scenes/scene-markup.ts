@@ -1,7 +1,7 @@
 import * as s from '../model/scene-types'
-import {Markup} from 'telegraf'
-import {InlineKeyboardMarkup} from 'typegram'
-import {VpnL10n} from './l10n/VpnL10n'
+import { Markup } from 'telegraf'
+import { InlineKeyboardMarkup } from 'typegram'
+import { VpnL10n } from './l10n/VpnL10n'
 
 export function getMarkup(scene: s.Scene, l10n: VpnL10n):
   Markup.Markup<InlineKeyboardMarkup> {
@@ -12,6 +12,15 @@ export function getMarkup(scene: s.Scene, l10n: VpnL10n):
       buttons.push([getReservationNow(l10n)])
       buttons.push([getReservationByDate(l10n)])
       buttons.push([getInstruction(l10n)])
+      break
+    case "Instruction":
+      buttons.push([getStartButton(l10n)])
+      break
+    case "ReservationNow":
+      buttons.push([getStartButton(l10n)])
+      break
+    case "ServerBlock":
+      buttons.push([getStartButton(l10n)])
       break
     case "IphoneInstruction":
       buttons.push([getStartButton(l10n)])
@@ -35,8 +44,6 @@ export function getMarkup(scene: s.Scene, l10n: VpnL10n):
       buttons.push([getFeedback(l10n)])
       buttons.push([getStartButton(l10n)])
       break
-    case "Instruction":
-      buttons.push([getStartButton(l10n)])
   }
   markup = Markup.inlineKeyboard(buttons)
   return markup

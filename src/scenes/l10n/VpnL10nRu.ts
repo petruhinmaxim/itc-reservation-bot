@@ -1,6 +1,6 @@
-import {VpnL10n} from "./VpnL10n"
+import { VpnL10n } from "./VpnL10n"
 import * as s from "../../model/scene-types"
-import {escapeString} from "../text-util";
+import { escapeString } from "../text-util";
 
 export class VpnL10nRu implements VpnL10n {
 
@@ -12,13 +12,13 @@ export class VpnL10nRu implements VpnL10n {
         return `Привет, ${userName}.\n` +
             `Я помогу тебе забронировать и получить доступ к серверу с покерными тренажерами. Для этого выбери удобное для тебя время в разделе «Забронировать по времени» или нажми на кнопку «Забронировать сейчас», если сервер свободен \n` +
             `Обрати внимание, что работа ведется по московскому времени, а интервал бронирования равен двум часам \n` +
-            `Не забудь ознакомиться с инструкцией и правилами работы на сервере \n \n`+
+            `Не забудь ознакомиться с инструкцией и правилами работы на сервере \n \n` +
             `Статус сервера: (Свободен ЗАНЯТ до ДАТА) \n` +
             'Мое бронирование: (отсутствует или дата время МСК)'
     }
 
     iphoneInstruction(scene: s.IphoneInstruction): string {
-        return `Сообщением выше в ближайшее время будет отправлена видеоинструкция для настройки VPN на Iphone или воспользуйтесь текстовой:\n \n`  +
+        return `Сообщением выше в ближайшее время будет отправлена видеоинструкция для настройки VPN на Iphone или воспользуйтесь текстовой:\n \n` +
             "1) Скачайте и установите клиент OpenVPN из AppStore. [Ссылка для скачивания](https://apps.apple.com/ru/app/openvpn-connect/id590379981)\n \n" +
             `2) В Telegram нажмите на скаченный ранее файл "mobilecontig.ovpn" => Выберите "Сохранить в файлы" => Нажмите "Сохранить" \n \n` +
             `3) Откройте приложение "Файлы" => Найдите файл "mobilecontig.ovpn" и откройте его с помощью программы OpenVPN` +
@@ -27,7 +27,7 @@ export class VpnL10nRu implements VpnL10n {
     }
 
     macInstruction(scene: s.MacInstruction): string {
-        return `Сообщением выше в ближайшее время будет отправлена видеоинструкция для настройки VPN на MAC или воспользуйтесь текстовой:\n \n`  +
+        return `Сообщением выше в ближайшее время будет отправлена видеоинструкция для настройки VPN на MAC или воспользуйтесь текстовой:\n \n` +
             "1) Скачайте и установите клиент OpenVPN. [Ссылка для скачивания](https://openvpn.net/client-connect-vpn-for-mac-os/)\n \n" +
             `2) В Telegram нажмите на скаченный ранее файл "pccontiq.ovpn" и откройте с помощью программы OpenVPN =>` +
             ` на вопрос "Import .ovpn profile" нажмите "ОК" => нажмите "CONNECT"  \n \n` +
@@ -35,7 +35,7 @@ export class VpnL10nRu implements VpnL10n {
     }
 
     androidInstruction(scene: s.AndroidInstruction): string {
-        return `Сообщением выше в ближайшее время будет отправлена видеоинструкция для настройки VPN на Android или воспользуйтесь текстовой:\n \n`  +
+        return `Сообщением выше в ближайшее время будет отправлена видеоинструкция для настройки VPN на Android или воспользуйтесь текстовой:\n \n` +
             "1) Скачайте и установите клиент OpenVPN из PlayStore. [Ссылка для скачивания](https://play.google.com/store/apps/details?id=net.openvpn.openvpn)\n \n" +
             `2) В Telegram нажмите на скаченный ранее файл "mobilecontig.ovpn" => Выберите "Сохранить в загрузки"\n \n` +
             `3) Откройте приложение OpenVPN => Перейдите в в раздел "Import ProFile" => "File" => "Browser" => ` +
@@ -45,7 +45,7 @@ export class VpnL10nRu implements VpnL10n {
     }
 
     windowsInstruction(scene: s.WindowsInstruction): string {
-        return `Сообщением выше в ближайшее время будет отправлена видеоинструкция для настройки VPN на Windows или воспользуйтесь текстовой:\n \n`  +
+        return `Сообщением выше в ближайшее время будет отправлена видеоинструкция для настройки VPN на Windows или воспользуйтесь текстовой:\n \n` +
             "1) Скачайте и установите клиент OpenVPN.  [Ссылка для скачивания](https://openvpn.net/client-connect-vpn-for-windows/)\n \n" +
             `2) В Telegram нажмите на скаченный ранее файл "pccontiq.ovpn" и откройте с помощью программы OpenVPN => ` +
             `на вопрос "Import .ovpn profile" нажмите "ОК" => нажимаем "CONNECT"\n \n` +
@@ -57,15 +57,15 @@ export class VpnL10nRu implements VpnL10n {
             `- время отклика 100 ms \n - установка соединения до 3 s   \n \n` +
             `2) Наблюдаются сложности в работе с некоторыми интернет провайдерами, повлиять не это нет в возможности. В редких случаях помогает переустановка программы OpenVPN и повторная загрузка конфигов\n \n` +
             `3) [Инструкция](https://www.youtube.com/shorts/GuLgHMi79VU) по настройке автоматического включения VPN при запуске программ на Iphone \n \n`
-            )
+        )
     }
 
     feedback(scene: s.Feedback): string {
         return (`Отправьте сообщением все, что посчитаете важным и не только\n`)
     }
 
-    instruction(scene:s.Instruction): string {
-        return (`Доступ: \n`+
+    instruction(scene: s.Instruction): string {
+        return (`Доступ: \n` +
             '1) Тестовый доступ к серверу предоставляется на 2 недели \n' +
             '2) После окончания триального периода доступ возобновляется при генерации 300+$ рейка в месяц на афф направление и для всех игроков бекинкового фонда ITC \n \n' +
             'Инструкция: \n' +
@@ -73,10 +73,20 @@ export class VpnL10nRu implements VpnL10n {
             '2) За 5 минут до времени бронирования вам придет сообщение с адресом сервера, логином и паролем \n' +
             '3) Не забывайте закрыть все запущенные программы после завершения тренировки \n' +
             '4) За 5 минут до окончания брони вы получите сообщение. Просьба, не занимайте сервер после окончания времени бронирования \n \n' +
+            '5) Если заканчиваете работу с сервером до окончания времени бронирования, нажмите, пожалуйста кнопку "Отменить бронирование"\n \n' +
             'Список установленного софта и функционал: \n' +
             '- Софт 1 + ссылка \n' +
             '- Софт 2 + ссылка'
         )
+
+    }
+
+    reservationNow(scene: s.ReservationNow): string {
+        return (`Сервер успешно забронирован. Дата: ${scene.myReservation?.reservationDate} Время: ${scene.myReservation?.reservationTime}`)
+    }
+
+    serverBlock(scene: s.ServerBlock): string {
+        return (`Сервер сейчас занят, выберите бронирование по времени`)
     }
 
 
@@ -127,19 +137,19 @@ export class VpnL10nRu implements VpnL10n {
         )
     }
 
-    goToReservationNow():string {
+    goToReservationNow(): string {
         return escapeString(
             'Забронировать сейчас'
         )
     }
 
-    goToReservationByDate():string {
+    goToReservationByDate(): string {
         return escapeString(
             'Забронировать по времени'
         )
     }
 
-    goToInstruction():string {
+    goToInstruction(): string {
         return escapeString(
             'Инструкция и правила'
         )
@@ -186,6 +196,13 @@ export class VpnL10nRu implements VpnL10n {
                 break
             case "Instruction":
                 text = this.instruction(scene)
+                break
+            case "ReservationNow":
+                text = this.reservationNow(scene)
+                break
+            case "ServerBlock":
+                    text = this.serverBlock(scene)
+
         }
         return text
     }

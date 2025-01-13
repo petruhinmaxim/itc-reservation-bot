@@ -31,9 +31,15 @@ export type UserAccess = {
 }
 
 export type ServerReservation = {
+  reservetionID?: number
   reservationDate: string
   reservationTime: string
   telegramUserId?: number
+}
+
+export type ReservationTyme = {
+  name: string
+  tyme: number
 }
 
 
