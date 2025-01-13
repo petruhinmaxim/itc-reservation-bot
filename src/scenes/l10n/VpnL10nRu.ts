@@ -142,6 +142,10 @@ export class VpnL10nRu implements VpnL10n {
         return (`Выберите дату для бронирования сервера`)
     }
 
+    reservationByTime(scene: s.ReservationByTime): string {
+        return (`Выберите время бронирования сервера`)
+    }
+
 
     sendMassageToUser(scene: s.SendMassageToUser): string {
         let userName = scene.userName
@@ -155,7 +159,7 @@ export class VpnL10nRu implements VpnL10n {
     //navigation
     goToMainMenu(): string {
         return escapeString(
-            `<< Назад`
+            `<< Приветсвенное меню`
         )
     }
 
@@ -255,6 +259,16 @@ export class VpnL10nRu implements VpnL10n {
         }
     }
 
+    goToTimeSlot1(scene: s.Scene): string {
+        if (scene.tpe == "ReservationByTime")
+            return escapeString(
+                `${scene.timeSlot1}`
+            )
+        else {
+            return ""
+        }
+    }
+
 
 
 
@@ -302,8 +316,9 @@ export class VpnL10nRu implements VpnL10n {
             case "ReservationByDate":
                 text = this.reservationByDate(scene)
                 break
-
-
+            case "ReservationByTime":
+                text = this.reservationByTime(scene)
+                break
         }
         return text
     }

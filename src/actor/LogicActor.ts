@@ -542,6 +542,7 @@ export default class LogicActor {
             }
 
             case 'ReservationByDate': {
+                //тут заполнение по 3-м ближайшим датам, включая сегодня
                 user.currentScene = {
                     tpe: "ReservationByDate",
                     messageId: payload.messageId,
@@ -553,13 +554,15 @@ export default class LogicActor {
             }
 
             case 'ReservationByTime': {
-                console.log("ACtion" + markupDataParseActionInScene(payload.data))
+                // тут заполнение слотов во доступному времени от текущего
                 user.currentScene = {
                     tpe: "ReservationByTime",
                     messageId: payload.messageId,
                     timeSlot1: "10:00",
                     timeSlot2: "11:00",
                     timeSlot3: "12:00",
+                    timeSlot4: "12:00",
+                    timeSlot5: "12:00",
                     dateSlot: markupDataParseActionInScene(payload.data)
                 }
                 break

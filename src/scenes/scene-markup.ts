@@ -27,13 +27,28 @@ export function getMarkup(scene: s.Scene, l10n: VpnL10n):
       buttons.push([getStartButton(l10n)])
       break
     case "ReservationByDate":
-      // TODO метод, возвращающий массив кнопок по времени и стартовую)
       buttons.push([getDateSlot1(l10n, scene)])
       buttons.push([getDateSlot2(l10n, scene)])
       buttons.push([getDateSlot3(l10n, scene)])
       buttons.push([getStartButton(l10n)])
       break
     case "ReservationByTime":
+      buttons.push([getTimeSlot1(l10n, scene)])
+      // buttons.push([getTimeSlot2(l10n, scene)])
+      // buttons.push([getTimeSlot3(l10n, scene)])
+      // buttons.push([getTimeSlot4(l10n, scene)])
+      // buttons.push([getTimeSlot5(l10n, scene)])
+      // buttons.push([getTimeSlot6(l10n, scene)])
+      // buttons.push([getTimeSlot7(l10n, scene)])
+      // buttons.push([getTimeSlot8(l10n, scene)])
+      // buttons.push([getTimeSlot9(l10n, scene)])
+      // buttons.push([getTimeSlot10(l10n, scene)])
+      // buttons.push([getTimeSlot11(l10n, scene)])
+      // buttons.push([getTimeSlot12(l10n, scene)])
+
+
+
+
       buttons.push([getStartButton(l10n)])
       break
     case "IphoneInstruction":
@@ -135,6 +150,16 @@ function getDateSlot3(l10n: VpnL10n, scene: s.Scene) {
     return Markup.button.callback(l10n.goToMainMenu(), markupDataGen('Start'))
   }
 }
+
+function getTimeSlot1(l10n: VpnL10n, scene: s.Scene) {
+  if (scene.tpe == "ReservationByTime")
+    return Markup.button.callback(l10n.goToTimeSlot1(scene), markupDataGen('ReservationByTime', scene.timeSlot1))
+  else {
+    return Markup.button.callback(l10n.goToMainMenu(), markupDataGen('Start'))
+  }
+}
+
+
 
 
 
