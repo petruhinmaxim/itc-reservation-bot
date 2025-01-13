@@ -415,7 +415,6 @@ export default class LogicActor {
                 })
                 if (serverReservation?.telegramUserId) {
                     serverStatus = true
-                    console.log(serverReservation.reservetionID)
                 }
 
                 let reservations: ServerReservation[] | undefined
@@ -526,7 +525,7 @@ export default class LogicActor {
                                 let reservationTelegramIDTosave = reservations[i].telegramUserId
                                 if (resevationIDTodelete && reservationTelegramIDTosave) {
                                     let updReservationID: number = resevationIDTodelete
-                                    let updTelegramId:number = reservationTelegramIDTosave
+                                    let updTelegramId: number = reservationTelegramIDTosave
                                     await this.vpnDB.withConnection(this.log, async con => {
                                         serverReservation = await this.serverReservationRepo.changeUserReservation(con, 0, updReservationID, updTelegramId)
                                     })
@@ -759,11 +758,62 @@ export default class LogicActor {
                     }
                     await this.sendToUser(user, out)
                 }
-                user.currentScene = {
-                    tpe: 'Start',
-                    messageId: payload.messageId,
-                    userName: userData.firstName
+
+                //TODO получение информации о статусе сервера и времени бронирования
+                const moscowOffset = 3 * 60
+                const now = new Date();
+                const moscowTime = new Date(now.getTime() + (now.getTimezoneOffset() + moscowOffset) * 60000);
+
+                const dayTodat = String(moscowTime.getDate()).padStart(2, '0');
+                const monthToday = String(moscowTime.getMonth() + 1).padStart(2, '0');
+                let dateToday = `${dayTodat}.${monthToday}`;
+                const intervalTyme = getTimeInterval()
+                let serverReservation: ServerReservation | undefined
+                let serverStatus = false
+
+                await this.vpnDB.withConnection(this.log, async con => {
+                    serverReservation = await this.serverReservationRepo.selectReservationBy(con, dateToday, intervalTyme)
+                })
+                if (serverReservation?.telegramUserId) {
+                    serverStatus = true
                 }
+
+                let reservations: ServerReservation[] | undefined
+                let reservationId: number = 0
+                if (serverReservation?.reservetionID) reservationId = serverReservation.reservetionID
+                let lastActiveReservation: ServerReservation | undefined
+                let lastEamptyReservation: ServerReservation | undefined
+                let myReservation: ServerReservation | undefined
+
+                await this.vpnDB.withConnection(this.log, async con => {
+                    reservations = await this.serverReservationRepo.selectLastDaysReservations(con, reservationId)
+
+                    if (reservations?.length) {
+                        for (let i = reservations?.length - 1; i >= 0; i--) {
+                            if (reservations[i].telegramUserId == 0 && !lastEamptyReservation) {
+                                lastEamptyReservation = reservations[i]
+                            }
+                            if (reservations[i].telegramUserId != 0 && !lastActiveReservation) {
+                                lastActiveReservation = reservations[i]
+                            }
+                            if (reservations[i].telegramUserId == userData.telegramUserId) {
+                                myReservation = reservations[i]
+                            }
+                        }
+                    }
+                })
+
+                user.currentScene = {
+                    tpe: "Start",
+                    messageId: payload.messageId,
+                    userName: userData.firstName,
+                    serverStatus: serverStatus,
+                    lastEamptyReservation: lastEamptyReservation,
+                    lustActiveReservation: lastActiveReservation,
+                    myReservation: myReservation
+                }
+
+
                 out = {
                     tpe: 'SendOutput',
                     scene: user.currentScene
@@ -788,6 +838,19 @@ export default class LogicActor {
                     await this.sendToUser(user, out)
                 }
             }
+        }
+        function getTimeInterval() {
+            const now = new Date();
+            const moscowOffset = 3 * 60; // Смещение Москвы от UTC в минутах (UTC+3)
+            const localTime = new Date(now.getTime() + now.getTimezoneOffset() * 60000 + moscowOffset * 60000);
+            const hours = localTime.getHours()
+            const intervalStart = Math.floor(hours / 2) * 2;
+            let intervalEnd = intervalStart + 2;
+            if (intervalStart == 22) {
+                intervalEnd = 0;
+            }
+            let interval = `${String(intervalStart).padStart(2, '0')}:00 - ${String(intervalEnd).padStart(2, '0')}:00 МСК`;
+            return interval
         }
     }
 
