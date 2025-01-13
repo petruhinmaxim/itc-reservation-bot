@@ -18,6 +18,12 @@ export interface ServerReservationRepository {
         connection: VpnDBConnection
     ): Promise<ServerReservation | undefined>
 
+    selectLastDaysReservations(
+        connection: VpnDBConnection,
+        reservationID: number
+
+    ): Promise<ServerReservation[] | undefined>
+
     addReservation(
         connection: VpnDBConnection,
         telegramUserId: number
@@ -70,6 +76,16 @@ class ServerReservationRepositoryImpl implements ServerReservationRepository {
     ): Promise<ServerReservation | undefined> {
         return sql.selectLastReservation(
             await this.clientLocator.ensureClient(connection)
+        )
+    }
+
+    async selectLastDaysReservations(
+        connection: VpnDBConnection,
+        reservationID: number
+    ): Promise<ServerReservation[] | undefined> {
+        return sql.selectLastDaysReservations(
+            await this.clientLocator.ensureClient(connection),
+            reservationID
         )
     }
 
@@ -154,6 +170,21 @@ namespace sql {
         return res.rows.map(serverReservationRowMapping).shift()
     }
 
+    export async function selectLastDaysReservations(
+        client: ClientBase,
+        reservationID: number
+    ): Promise<ServerReservation[]| undefined> {
+        const res = await client.query(
+            `SELECT *
+            FROM server_reservation
+            WHERE id >= $1
+            ORDER BY id DESC
+            LIMIT 50;`,
+            [reservationID]
+        )
+        return res.rows.map(serverReservationRowMapping)
+    }
+
     export async function addReservation( //TODO
         client: ClientBase,
         telegramUserId: number
@@ -180,9 +211,4 @@ namespace sql {
         )
         return res.rows.map(serverReservationRowMapping).shift()
     }
-
-
-
-
-    
 }

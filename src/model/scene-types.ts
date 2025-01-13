@@ -10,7 +10,8 @@ export type Start = {
   messageId?: number
   userName?: string
   myReservation?: ServerReservation
-  lustReservation?: ServerReservation
+  lustActiveReservation?: ServerReservation
+  lastEamptyReservation?: ServerReservation
   serverStatus?: boolean
 }
 

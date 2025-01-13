@@ -1,6 +1,7 @@
 import { VpnL10n } from "./VpnL10n"
 import * as s from "../../model/scene-types"
 import { escapeString } from "../text-util";
+import { ServerReservation } from "../../model/vpn-user-types";
 
 export class VpnL10nRu implements VpnL10n {
 
@@ -9,12 +10,54 @@ export class VpnL10nRu implements VpnL10n {
         if (!userName) {
             userName = `Друг`
         }
-        return `Привет, ${userName}.\n` +
-            `Я помогу тебе забронировать и получить доступ к серверу с покерными тренажерами. Для этого выбери удобное для тебя время в разделе «Забронировать по времени» или нажми на кнопку «Забронировать сейчас», если сервер свободен \n` +
-            `Обрати внимание, что работа ведется по московскому времени, а интервал бронирования равен двум часам \n` +
-            `Не забудь ознакомиться с инструкцией и правилами работы на сервере \n \n` +
-            `Статус сервера: (Свободен ЗАНЯТ до ДАТА) \n` +
-            'Мое бронирование: (отсутствует или дата время МСК)'
+        let status: string
+        let date: string | undefined
+        let tyme: string | undefined
+        let myReservationDate: string | undefined
+        let myReservationTime: string | undefined
+        console.log("Моя бронь" + scene.myReservation)
+
+        if (scene.serverStatus) {
+            status = "забронирован до"
+            date = scene.lastEamptyReservation?.reservationDate
+            tyme = scene.lastEamptyReservation?.reservationTime.split(" ", 2)[0]
+        } else {
+            status = "свободен"
+            date = scene.lustActiveReservation?.reservationDate
+            tyme = scene.lustActiveReservation?.reservationTime.split(" ", 1)[0]
+        }
+        if (scene.serverStatus) {
+            return `Привет, ${userName}.\n` +
+                `Я помогу тебе забронировать и получить доступ к серверу с покерными тренажерами. Для этого выбери удобное для тебя время в разделе «Забронировать по времени» или нажми на кнопку «Забронировать сейчас», если сервер свободен \n` +
+                `Обрати внимание, что работа ведется по московскому времени, а интервал бронирования равен двум часам \n` +
+                `Не забудь ознакомиться с инструкцией и правилами работы на сервере \n \n` +
+                `Статус сервера: ${status} ${date} ${tyme} МСК \n` +
+                this.addMyReservationInfo(scene.myReservation)
+        }
+        else if (date) {
+            return `Привет, ${userName}.\n` +
+                `Я помогу тебе забронировать и получить доступ к серверу с покерными тренажерами. Для этого выбери удобное для тебя время в разделе «Забронировать по времени» или нажми на кнопку «Забронировать сейчас», если сервер свободен \n` +
+                `Обрати внимание, что работа ведется по московскому времени, а интервал бронирования равен двум часам \n` +
+                `Не забудь ознакомиться с инструкцией и правилами работы на сервере \n \n` +
+                `Статус сервера ${status} до ${date} ${tyme} МСК \n` +
+                this.addMyReservationInfo(scene.myReservation)
+        }
+        else {
+            return `Привет, ${userName}.\n` +
+                `Я помогу тебе забронировать и получить доступ к серверу с покерными тренажерами. Для этого выбери удобное для тебя время в разделе «Забронировать по времени» или нажми на кнопку «Забронировать сейчас», если сервер свободен \n` +
+                `Обрати внимание, что работа ведется по московскому времени, а интервал бронирования равен двум часам \n` +
+                `Не забудь ознакомиться с инструкцией и правилами работы на сервере \n \n` +
+                `Статус сервера ${status}  \n` +
+                this.addMyReservationInfo(scene.myReservation)
+        }
+    }
+    addMyReservationInfo(reservation:ServerReservation |undefined) {
+        if(!reservation) {
+            return "Мое бронирование: отсутствует"
+        }
+        else {
+            return `Мое бронирование: ${reservation.reservationDate} ${reservation.reservationTime}`
+        }
     }
 
     iphoneInstruction(scene: s.IphoneInstruction): string {
@@ -201,7 +244,7 @@ export class VpnL10nRu implements VpnL10n {
                 text = this.reservationNow(scene)
                 break
             case "ServerBlock":
-                    text = this.serverBlock(scene)
+                text = this.serverBlock(scene)
 
         }
         return text

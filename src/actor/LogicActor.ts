@@ -389,7 +389,6 @@ export default class LogicActor {
         })
     }
 
-
     private async processMainCallback(
         con: VpnDBConnection,
         user: VpnUser,
@@ -399,11 +398,59 @@ export default class LogicActor {
         const sceneTpeInCallbackData = markupDataParseSceneTpe(payload.data)
         switch (sceneTpeInCallbackData) {
             case 'Start': {
-                //TODO получение информации о статусе сервера и времени бронирования 
+                //TODO получение информации о статусе сервера и времени бронирования
+                const moscowOffset = 3 * 60
+                const now = new Date();
+                const moscowTime = new Date(now.getTime() + (now.getTimezoneOffset() + moscowOffset) * 60000);
+
+                const dayTodat = String(moscowTime.getDate()).padStart(2, '0');
+                const monthToday = String(moscowTime.getMonth() + 1).padStart(2, '0');
+                let dateToday = `${dayTodat}.${monthToday}`;
+                const intervalTyme = getTimeInterval()
+                let serverReservation: ServerReservation | undefined
+                let serverStatus = false
+
+                await this.vpnDB.withConnection(this.log, async con => {
+                    serverReservation = await this.serverReservationRepo.selectReservationBy(con, dateToday, intervalTyme)
+                })
+                if (serverReservation?.telegramUserId) {
+                    serverStatus = true
+                    console.log(serverReservation.reservetionID)
+                }
+
+                let reservations: ServerReservation[] | undefined
+                let reservationId: number = 0
+                if (serverReservation?.reservetionID) reservationId = serverReservation.reservetionID
+                let lastActiveReservation: ServerReservation | undefined
+                let lastEamptyReservation: ServerReservation | undefined
+                let myReservation: ServerReservation | undefined
+
+                await this.vpnDB.withConnection(this.log, async con => {
+                    reservations = await this.serverReservationRepo.selectLastDaysReservations(con, reservationId)
+
+                    if (reservations?.length) {
+                        for (let i = reservations?.length - 1; i >= 0; i--) {
+                            if (reservations[i].telegramUserId == 0 && !lastEamptyReservation) {
+                                lastEamptyReservation = reservations[i]
+                            }
+                            if (reservations[i].telegramUserId != 0 && !lastActiveReservation) {
+                                lastActiveReservation = reservations[i]
+                            }
+                            if(reservations[i].telegramUserId == userData.telegramUserId) {
+                                myReservation = reservations[i]
+                            }
+                        }
+                    }
+                })
+
                 user.currentScene = {
                     tpe: "Start",
                     messageId: payload.messageId,
-                    userName: userData.firstName
+                    userName: userData.firstName,
+                    serverStatus: serverStatus,
+                    lastEamptyReservation: lastEamptyReservation,
+                    lustActiveReservation: lastActiveReservation,
+                    myReservation: myReservation
                 }
                 break
             }
@@ -423,17 +470,16 @@ export default class LogicActor {
                     reservationTime: intervalTyme
                 }
 
-                let servarReservation: ServerReservation | undefined
+                let serverReservation: ServerReservation | undefined
 
-                // TODO получить запись в таблице и протестить
                 await this.vpnDB.withConnection(this.log, async con => {
-                    servarReservation = await this.serverReservationRepo.selectReservationBy(con, dateToday, intervalTyme)
+                    serverReservation = await this.serverReservationRepo.selectReservationBy(con, dateToday, intervalTyme)
                 })
 
-                if (servarReservation?.telegramUserId == 0 && servarReservation && servarReservation.reservetionID) {
-                    let reservationId = servarReservation.reservetionID
+                if (serverReservation?.telegramUserId == 0 && serverReservation && serverReservation.reservetionID) {
+                    let reservationId = serverReservation.reservetionID
                     await this.vpnDB.withConnection(this.log, async con => {
-                        servarReservation = await this.serverReservationRepo.addUserReservation(con, userData.telegramUserId, reservationId)
+                        serverReservation = await this.serverReservationRepo.addUserReservation(con, userData.telegramUserId, reservationId)
                     })
 
                     user.currentScene = {
@@ -449,10 +495,8 @@ export default class LogicActor {
                         messageId: payload.messageId
                     }
                 }
-                //TODO бронирование 
                 break
             }
-
 
             case 'IphoneInstruction': {
                 user.currentScene = {
@@ -694,8 +738,6 @@ export default class LogicActor {
         }
     }
 
-
-
     async processResendOutboundMessage(msg: tg.OutboundTelegramMessage) {
         let user: VpnUser | undefined
         let userData: TelegramUserData | undefined
@@ -727,4 +769,3 @@ export default class LogicActor {
         }
     }
 }
-
