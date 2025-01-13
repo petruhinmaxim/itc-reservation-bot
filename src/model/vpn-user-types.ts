@@ -25,15 +25,15 @@ export type VpnUser = {
 }
 
 export type UserAccess = {
-  telegram_user_id: number
-  start_trial_time: Date
-  user_access: boolean
+  telegramUserId: number
+  startTrialTime: Date
+  userAccess: boolean
 }
 
 export type ServerReservation = {
-  reservation_date: string
-  reservation_time: string
-  telegram_user_id?: number
+  reservationDate: string
+  reservationTime: string
+  telegramUserId?: number
 }
 
 

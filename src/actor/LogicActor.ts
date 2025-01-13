@@ -1,7 +1,8 @@
-import {Actor} from 'comedy'
-import {actorLogger, Logger} from '../util/Logger'
+import { Actor } from 'comedy'
+import { actorLogger, Logger } from '../util/Logger'
 import * as tg from '../model/telegram-massege-types'
 import {
+    ServerReservation,
     TelegramUserData,
     telegramUserEquals, UserAction,
     UserConfigs,
@@ -9,15 +10,16 @@ import {
     VpnConfig,
     VpnUser
 } from '../model/vpn-user-types'
-import {VpnDB, VpnDBConnection} from '../db/VpnDB'
-import {makeTelegramUserDataRepository, TelegramUserDataRepository} from '../db/repository/TelegramUserDataRepository'
-import {makeVpnUserRepository, VpnUserRepository} from "../db/repository/VpnUserRepository"
-import {markupDataParseSceneTpe} from '../scenes/scene-markup'
-import {ConfigRepository, makeConfigRepository} from "../db/repository/ConfigRepository"
-import {makeUserConfigRepository, UserConfigRepository} from "../db/repository/UserConfigRepository"
-import {OutputPayload} from "../model/telegram-massege-types"
-import {makeUserFeedbackRepository, UserFeedbackRepository} from "../db/repository/UserFeedbackRepository";
-import {makeUserActionRepository, UserActionRepository} from "../db/repository/UserActionRepository";
+import { VpnDB, VpnDBConnection } from '../db/VpnDB'
+import { makeTelegramUserDataRepository, TelegramUserDataRepository } from '../db/repository/TelegramUserDataRepository'
+import { makeVpnUserRepository, VpnUserRepository } from "../db/repository/VpnUserRepository"
+import { markupDataParseSceneTpe } from '../scenes/scene-markup'
+import { ConfigRepository, makeConfigRepository } from "../db/repository/ConfigRepository"
+import { makeUserConfigRepository, UserConfigRepository } from "../db/repository/UserConfigRepository"
+import { OutputPayload } from "../model/telegram-massege-types"
+import { makeUserFeedbackRepository, UserFeedbackRepository } from "../db/repository/UserFeedbackRepository";
+import { makeUserActionRepository, UserActionRepository } from "../db/repository/UserActionRepository";
+import { makeServerReservationRepository, ServerReservationRepository } from '../db/repository/ServerReservationRepository'
 
 export default class LogicActor {
     private readonly vpnDB: VpnDB
@@ -29,6 +31,7 @@ export default class LogicActor {
     private userConfigsRepo!: UserConfigRepository
     private userFeedbackRepo!: UserFeedbackRepository
     private userActionRepo!: UserActionRepository
+    private serverReservationRepo!: ServerReservationRepository
 
     static inject() {
         return ['VpnDBResource']
@@ -47,7 +50,277 @@ export default class LogicActor {
         this.userConfigsRepo = makeUserConfigRepository(this.vpnDB)
         this.userFeedbackRepo = makeUserFeedbackRepository(this.vpnDB)
         this.userActionRepo = makeUserActionRepository(this.vpnDB)
+        this.serverReservationRepo = makeServerReservationRepository(this.vpnDB)
         this.log.info('init')
+
+        async () => {
+            console.log("INIT SLOTS")
+            const lustReservation = await this.vpnDB.withTransaction(
+                this.log, async con => {
+                    return await this.serverReservationRepo.selectLastReservation(con)
+                })
+            const lustReservationDate = lustReservation?.reservationDate
+
+            const moscowOffset = 3 * 60
+            const now = new Date();
+            const moscowTime = new Date(now.getTime() + (now.getTimezoneOffset() + moscowOffset) * 60000);
+
+            const dayTodat = String(moscowTime.getDate()).padStart(2, '0');
+            const monthToday = String(moscowTime.getMonth() + 1).padStart(2, '0');
+            let dateForCompere = `${dayTodat}.${monthToday}`
+
+            if (!lustReservationDate) {
+                await insertServerReservationsByDate(dateForCompere, this.vpnDB, this.log, this.serverReservationRepo)
+
+                moscowTime.setDate(moscowTime.getDate() + 1);
+                const dayOne = String(moscowTime.getDate()).padStart(2, '0');
+                const monthOne = String(moscowTime.getMonth() + 1).padStart(2, '0');
+                dateForCompere = `${dayOne}.${monthOne}`
+                await insertServerReservationsByDate(dateForCompere, this.vpnDB, this.log, this.serverReservationRepo)
+
+                moscowTime.setDate(moscowTime.getDate() + 1);
+                const day2 = String(moscowTime.getDate()).padStart(2, '0');
+                const month2 = String(moscowTime.getMonth() + 1).padStart(2, '0');
+                dateForCompere = `${day2}.${month2}`
+                await insertServerReservationsByDate(dateForCompere, this.vpnDB, this.log, this.serverReservationRepo)
+
+                moscowTime.setDate(moscowTime.getDate() + 1);
+                const day3 = String(moscowTime.getDate()).padStart(2, '0');
+                const month3 = String(moscowTime.getMonth() + 1).padStart(2, '0');
+                dateForCompere = `${day3}.${month3}`
+                await insertServerReservationsByDate(dateForCompere, this.vpnDB, this.log, this.serverReservationRepo)
+
+            }
+            else {
+                moscowTime.setDate(moscowTime.getDate() + 1);
+                const dayOne = String(moscowTime.getDate()).padStart(2, '0');
+                const monthOne = String(moscowTime.getMonth() + 1).padStart(2, '0');
+                let dateForCompere = `${dayOne}.${monthOne}`
+
+                let compareRes = compareDates(lustReservationDate, dateForCompere)
+                if (compareRes === -1) {
+                    await insertServerReservationsByDate(dateForCompere, this.vpnDB, this.log, this.serverReservationRepo)
+                }
+                moscowTime.setDate(moscowTime.getDate() + 1);
+                const day2 = String(moscowTime.getDate()).padStart(2, '0');
+                const month2 = String(moscowTime.getMonth() + 1).padStart(2, '0');
+                dateForCompere = `${day2}.${month2}`
+                compareRes = compareDates(lustReservationDate, dateForCompere)
+                if (compareRes === -1) {
+                    await insertServerReservationsByDate(dateForCompere, this.vpnDB, this.log, this.serverReservationRepo)
+                }
+                moscowTime.setDate(moscowTime.getDate() + 1);
+                const day3 = String(moscowTime.getDate()).padStart(2, '0');
+                const month3 = String(moscowTime.getMonth() + 1).padStart(2, '0');
+                dateForCompere = `${day3}.${month3}`
+                compareRes = compareDates(lustReservationDate, dateForCompere)
+                if (compareRes === -1) {
+                    await insertServerReservationsByDate(dateForCompere, this.vpnDB, this.log, this.serverReservationRepo)
+                }
+            }
+        }
+
+        setInterval( async () => {
+            console.log("INIT SLOTS")
+            const lustReservation = await this.vpnDB.withTransaction(
+                this.log, async con => {
+                    return await this.serverReservationRepo.selectLastReservation(con)
+                })
+            const lustReservationDate = lustReservation?.reservationDate
+
+            const moscowOffset = 3 * 60
+            const now = new Date();
+            const moscowTime = new Date(now.getTime() + (now.getTimezoneOffset() + moscowOffset) * 60000);
+
+            const dayTodat = String(moscowTime.getDate()).padStart(2, '0');
+            const monthToday = String(moscowTime.getMonth() + 1).padStart(2, '0');
+            let dateForCompere = `${dayTodat}.${monthToday}`
+
+            if (!lustReservationDate) {
+                await insertServerReservationsByDate(dateForCompere, this.vpnDB, this.log, this.serverReservationRepo)
+
+                moscowTime.setDate(moscowTime.getDate() + 1);
+                const dayOne = String(moscowTime.getDate()).padStart(2, '0');
+                const monthOne = String(moscowTime.getMonth() + 1).padStart(2, '0');
+                dateForCompere = `${dayOne}.${monthOne}`
+                await insertServerReservationsByDate(dateForCompere, this.vpnDB, this.log, this.serverReservationRepo)
+
+                moscowTime.setDate(moscowTime.getDate() + 1);
+                const day2 = String(moscowTime.getDate()).padStart(2, '0');
+                const month2 = String(moscowTime.getMonth() + 1).padStart(2, '0');
+                dateForCompere = `${day2}.${month2}`
+                await insertServerReservationsByDate(dateForCompere, this.vpnDB, this.log, this.serverReservationRepo)
+
+                moscowTime.setDate(moscowTime.getDate() + 1);
+                const day3 = String(moscowTime.getDate()).padStart(2, '0');
+                const month3 = String(moscowTime.getMonth() + 1).padStart(2, '0');
+                dateForCompere = `${day3}.${month3}`
+                await insertServerReservationsByDate(dateForCompere, this.vpnDB, this.log, this.serverReservationRepo)
+
+            }
+            else {
+                moscowTime.setDate(moscowTime.getDate() + 1);
+                const dayOne = String(moscowTime.getDate()).padStart(2, '0');
+                const monthOne = String(moscowTime.getMonth() + 1).padStart(2, '0');
+                let dateForCompere = `${dayOne}.${monthOne}`
+
+                let compareRes = compareDates(lustReservationDate, dateForCompere)
+                if (compareRes === -1) {
+                    await insertServerReservationsByDate(dateForCompere, this.vpnDB, this.log, this.serverReservationRepo)
+                }
+                moscowTime.setDate(moscowTime.getDate() + 1);
+                const day2 = String(moscowTime.getDate()).padStart(2, '0');
+                const month2 = String(moscowTime.getMonth() + 1).padStart(2, '0');
+                dateForCompere = `${day2}.${month2}`
+                compareRes = compareDates(lustReservationDate, dateForCompere)
+                if (compareRes === -1) {
+                    await insertServerReservationsByDate(dateForCompere, this.vpnDB, this.log, this.serverReservationRepo)
+                }
+                moscowTime.setDate(moscowTime.getDate() + 1);
+                const day3 = String(moscowTime.getDate()).padStart(2, '0');
+                const month3 = String(moscowTime.getMonth() + 1).padStart(2, '0');
+                dateForCompere = `${day3}.${month3}`
+                compareRes = compareDates(lustReservationDate, dateForCompere)
+                if (compareRes === -1) {
+                    await insertServerReservationsByDate(dateForCompere, this.vpnDB, this.log, this.serverReservationRepo)
+                }
+            }
+        }
+        , 20000)
+
+        async function insertServerReservationsByDate(dateForInsert: string, vpnDB: VpnDB, log: Logger, serverReservationRepo: ServerReservationRepository) {
+            let serverReservation: ServerReservation = {
+                reservationDate: dateForInsert,
+                reservationTime: "00:00 - 02:00 МСК"
+            }
+            await vpnDB.withTransaction(
+                log, async con => {
+                    return await serverReservationRepo.insertServerReservation(con, serverReservation)
+                })
+
+
+            serverReservation = {
+                reservationDate: dateForInsert,
+                reservationTime: "02:00 - 04:00 МСК"
+            }
+            await vpnDB.withTransaction(
+                log, async con => {
+                    return await serverReservationRepo.insertServerReservation(con, serverReservation)
+                })
+
+            serverReservation = {
+                reservationDate: dateForInsert,
+                reservationTime: "04:00 - 06:00 МСК"
+            }
+            await vpnDB.withTransaction(
+                log, async con => {
+                    return await serverReservationRepo.insertServerReservation(con, serverReservation)
+                })
+
+            serverReservation = {
+                reservationDate: dateForInsert,
+                reservationTime: "06:00 - 08:00 МСК"
+            }
+            await vpnDB.withTransaction(
+                log, async con => {
+                    return await serverReservationRepo.insertServerReservation(con, serverReservation)
+                })
+
+            serverReservation = {
+                reservationDate: dateForInsert,
+                reservationTime: "08:00 - 10:00 МСК"
+            }
+            await vpnDB.withTransaction(
+                log, async con => {
+                    return await serverReservationRepo.insertServerReservation(con, serverReservation)
+                })
+
+            serverReservation = {
+                reservationDate: dateForInsert,
+                reservationTime: "10:00 - 12:00 МСК"
+            }
+            await vpnDB.withTransaction(
+                log, async con => {
+                    return await serverReservationRepo.insertServerReservation(con, serverReservation)
+                })
+
+            serverReservation = {
+                reservationDate: dateForInsert,
+                reservationTime: "12:00 - 14:00 МСК"
+            }
+            await vpnDB.withTransaction(
+                log, async con => {
+                    return await serverReservationRepo.insertServerReservation(con, serverReservation)
+                })
+
+            serverReservation = {
+                reservationDate: dateForInsert,
+                reservationTime: "14:00 - 16:00 МСК"
+            }
+            await vpnDB.withTransaction(
+                log, async con => {
+                    return await serverReservationRepo.insertServerReservation(con, serverReservation)
+                })
+
+            serverReservation = {
+                reservationDate: dateForInsert,
+                reservationTime: "16:00 - 18:00 МСК"
+            }
+            await vpnDB.withTransaction(
+                log, async con => {
+                    return await serverReservationRepo.insertServerReservation(con, serverReservation)
+                })
+
+            serverReservation = {
+                reservationDate: dateForInsert,
+                reservationTime: "18:00 - 20:00 МСК"
+            }
+            await vpnDB.withTransaction(
+                log, async con => {
+                    return await serverReservationRepo.insertServerReservation(con, serverReservation)
+                })
+
+            serverReservation = {
+                reservationDate: dateForInsert,
+                reservationTime: "20:00 - 22:00 МСК"
+            }
+            await vpnDB.withTransaction(
+                log, async con => {
+                    return await serverReservationRepo.insertServerReservation(con, serverReservation)
+                })
+
+            serverReservation = {
+                reservationDate: dateForInsert,
+                reservationTime: "22:00 - 00:00 МСК"
+            }
+            await vpnDB.withTransaction(
+                log, async con => {
+                    return await serverReservationRepo.insertServerReservation(con, serverReservation)
+                })
+        }
+
+        function compareDates(date1: string, date2: string) {
+            try {
+                // Разбиваем строки на день и месяц
+                const [day1, month1] = date1.split('.').map(Number);
+                const [day2, month2] = date2.split('.').map(Number);
+
+                // Создаем фиктивный год (например, 2000) для сравнения
+                const d1 = new Date(2000, month1 - 1, day1);
+                const d2 = new Date(2000, month2 - 1, day2);
+
+                // Сравниваем даты
+                if (d1 < d2) {
+                    return -1;
+                } else if (d1 > d2) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            } catch (error) {
+                throw new Error("Неверный формат даты. Ожидается формат 'ДД.ММ'.");
+            }
+        }
     }
 
     private async ensureUser(
@@ -61,7 +334,7 @@ export default class LogicActor {
             await this.telegramUserDataRepo.insertTelegramUserData(con, telegramUserData)
             vpnUser = {
                 telegramUserId: telegramUserData.telegramUserId,
-                currentScene: {tpe: "Start"}
+                currentScene: { tpe: "Start" }
             }
         } else {
             if (!telegramUserEquals(telegramUserData, userData)) {
@@ -71,7 +344,7 @@ export default class LogicActor {
             if (!vpnUser) {
                 vpnUser = {
                     telegramUserId: telegramUserData.telegramUserId,
-                    currentScene: {tpe: "Start"}
+                    currentScene: { tpe: "Start" }
                 }
             }
         }
@@ -133,6 +406,15 @@ export default class LogicActor {
                 }
                 break
             }
+            case 'ReservationNow': {
+                user.currentScene = {
+                    tpe: "ReservationNow",
+                    messageId: payload.messageId,
+                }
+                break
+            }
+
+
             case 'IphoneInstruction': {
                 user.currentScene = {
                     tpe: "IphoneInstruction",

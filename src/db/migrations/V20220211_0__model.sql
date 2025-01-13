@@ -32,7 +32,8 @@ CREATE TABLE IF NOT EXISTS vpn_user_feedback (
 );
 
 CREATE TABLE IF NOT EXISTS server_reservation (
+   id BIGSERIAL PRIMARY KEY,
    reservation_date TEXT NOT NULL,
    reservation_time TEXT NOT NULL,
-   telegram_user_id BIGSERIAL REFERENCES telegram_user_data(telegram_user_id)
+   telegram_user_id BIGSERIAL
 );
