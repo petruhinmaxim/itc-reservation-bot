@@ -159,7 +159,7 @@ export class VpnL10nRu implements VpnL10n {
     //navigation
     goToMainMenu(): string {
         return escapeString(
-            `<< Приветсвенное меню`
+            `<< приветсвенное меню`
         )
     }
 
@@ -233,7 +233,7 @@ export class VpnL10nRu implements VpnL10n {
         if (scene.tpe == "ReservationByDate")
             return escapeString(
                 `${scene.dateSlot1}`
-            )
+            ).replace("\\", "")
         else {
             return ""
         }
@@ -243,7 +243,7 @@ export class VpnL10nRu implements VpnL10n {
         if (scene.tpe == "ReservationByDate")
             return escapeString(
                 `${scene.dateSlot2}`
-            )
+            ).replace("\\", "")
         else {
             return ""
         }
@@ -253,7 +253,7 @@ export class VpnL10nRu implements VpnL10n {
         if (scene.tpe == "ReservationByDate")
             return escapeString(
                 `${scene.dateSlot3}`
-            )
+            ).replace("\\", "")
         else {
             return ""
         }

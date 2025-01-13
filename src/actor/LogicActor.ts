@@ -542,13 +542,53 @@ export default class LogicActor {
             }
 
             case 'ReservationByDate': {
+                const moscowOffset = 3 * 60
+                const now = new Date();
+                const moscowTime = new Date(now.getTime() + (now.getTimezoneOffset() + moscowOffset) * 60000);
+
+                const dayTodat = String(moscowTime.getDate()).padStart(2, '0');
+                const monthToday = String(moscowTime.getMonth() + 1).padStart(2, '0');
+                let dateToday = `${dayTodat}.${monthToday}`;
+                const intervalTyme = getTimeInterval()
+                let serverReservation: ServerReservation | undefined
+                await this.vpnDB.withConnection(this.log, async con => {
+                    serverReservation = await this.serverReservationRepo.selectReservationBy(con, dateToday, intervalTyme)
+                })
+
+                let reservations: ServerReservation[] | undefined
+                let reservationId: number = 0
+                if (serverReservation?.reservetionID) reservationId = serverReservation.reservetionID
+                let dateSlot1: string | undefined
+                let dateSlot2: string | undefined
+                let dateSlot3: string | undefined
+
+                await this.vpnDB.withConnection(this.log, async con => {
+                    reservations = await this.serverReservationRepo.selectLastDaysReservations(con, reservationId)
+                    if (reservations?.length) {
+                        for (let i = reservations?.length - 1; i >= 0; i--) {
+                            if (!dateSlot1) {
+                                dateSlot1 = reservations[i].reservationDate
+                            }
+                            if (!dateSlot2 && dateSlot1 != reservations[i].reservationDate) {
+                                dateSlot2 = reservations[i].reservationDate
+                            }
+                            if (!dateSlot3 && dateSlot1 != reservations[i].reservationDate && dateSlot2 != reservations[i].reservationDate) {
+                                dateSlot3 = reservations[i].reservationDate
+                                console.log(reservations[i].reservationDate)
+                                break
+                            }
+
+                        }
+                    }
+                })
                 //тут заполнение по 3-м ближайшим датам, включая сегодня
+
                 user.currentScene = {
                     tpe: "ReservationByDate",
                     messageId: payload.messageId,
-                    dateSlot1: "111",
-                    dateSlot2: "222",
-                    dateSlot3: "333",
+                    dateSlot1: dateSlot1,
+                    dateSlot2: dateSlot2,
+                    dateSlot3: dateSlot3,
                 }
                 break
             }

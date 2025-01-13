@@ -29,15 +29,15 @@ export type ReservationNow = {
 export type ReservationByDate = {
   tpe: 'ReservationByDate',
   messageId?: number,
-  dateSlot1: string,
-  dateSlot2: string,
-  dateSlot3: string
+  dateSlot1?: string,
+  dateSlot2?: string,
+  dateSlot3?: string
 }
 
 export type ReservationByTime = {
   tpe: 'ReservationByTime',
   messageId?: number,
-  timeSlot1?: string,
+  timeSlot1: string,
   timeSlot2?: string,
   timeSlot3?: string,
   timeSlot4?: string,
