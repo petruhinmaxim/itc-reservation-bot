@@ -111,8 +111,16 @@ export class VpnL10nEn implements VpnL10n {
     goToTimeSlot1(scene: s.Scene): string {
         if (scene.tpe == "ReservationByTime")
             return escapeString(
-                `${scene.timeSlot1}`
+                `${scene.timeSlots[0]}`
             )
+        else {
+            return ""
+        }
+    }
+
+    goToTime(scene: s.Scene, timeSlot: string): string {
+        if (scene.tpe == "ReservationByTime")
+            return timeSlot
         else {
             return ""
         }

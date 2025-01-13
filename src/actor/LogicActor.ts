@@ -594,15 +594,39 @@ export default class LogicActor {
             }
 
             case 'ReservationByTime': {
-                // тут заполнение слотов во доступному времени от текущего
+                let timeSlots:string[] = []
+                let dataForTimeSlots = markupDataParseActionInScene(payload.data)
+                const moscowOffset = 3 * 60
+                const now = new Date();
+                const moscowTime = new Date(now.getTime() + (now.getTimezoneOffset() + moscowOffset) * 60000);
+
+                const dayTodat = String(moscowTime.getDate()).padStart(2, '0');
+                const monthToday = String(moscowTime.getMonth() + 1).padStart(2, '0');
+                let dateToday = `${dayTodat}.${monthToday}`;
+                const intervalTyme = getTimeInterval()
+                let serverReservation: ServerReservation | undefined
+                await this.vpnDB.withConnection(this.log, async con => {
+                    serverReservation = await this.serverReservationRepo.selectReservationBy(con, dateToday, intervalTyme)
+                })
+
+                let reservations: ServerReservation[] | undefined
+                let reservationId: number = 0
+                if (serverReservation?.reservetionID) reservationId = serverReservation.reservetionID
+                await this.vpnDB.withConnection(this.log, async con => {
+                    reservations = await this.serverReservationRepo.selectLastDaysReservations(con, reservationId)
+                    if (reservations?.length) {
+                        for (let i = reservations?.length - 1; i >= 0; i--) {
+                            if(reservations[i].reservationDate == dataForTimeSlots && reservations[i].telegramUserId == 0) {
+                                timeSlots.push(reservations[i].reservationTime)
+                            }
+                        }
+                    }
+                })
+
                 user.currentScene = {
                     tpe: "ReservationByTime",
                     messageId: payload.messageId,
-                    timeSlot1: "10:00",
-                    timeSlot2: "11:00",
-                    timeSlot3: "12:00",
-                    timeSlot4: "12:00",
-                    timeSlot5: "12:00",
+                    timeSlots: timeSlots,
                     dateSlot: markupDataParseActionInScene(payload.data)
                 }
                 break

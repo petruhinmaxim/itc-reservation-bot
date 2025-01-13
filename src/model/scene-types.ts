@@ -37,18 +37,7 @@ export type ReservationByDate = {
 export type ReservationByTime = {
   tpe: 'ReservationByTime',
   messageId?: number,
-  timeSlot1: string,
-  timeSlot2?: string,
-  timeSlot3?: string,
-  timeSlot4?: string,
-  timeSlot5?: string,
-  timeSlot6?: string,
-  timeSlot7?: string,
-  timeSlot8?: string,
-  timeSlot9?: string,
-  timeSlot10?: string,
-  timeSlot11?: string,
-  timeSlot12?: string,
+  timeSlots: string[],
   dateSlot?:string
 }
 

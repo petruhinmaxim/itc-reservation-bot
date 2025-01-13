@@ -20,4 +20,5 @@ export interface VpnL10n {
   goToDateSlot2(scene: Scene):string
   goToDateSlot3(scene: Scene):string
   goToTimeSlot1(scene: Scene):string
+  goToTime(scene:Scene, timeSlot:string):string
 }
