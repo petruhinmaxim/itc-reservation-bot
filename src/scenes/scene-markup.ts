@@ -30,6 +30,8 @@ export function getMarkup(scene: s.Scene, l10n: VpnL10n):
       buttons.push([getDateSlot1(l10n, scene)])
       buttons.push([getDateSlot2(l10n, scene)])
       buttons.push([getDateSlot3(l10n, scene)])
+      buttons.push([getStartButton(l10n)])
+
       break
     case "ReservationByTime":
       if (scene.tpe == "ReservationByTime") {

@@ -488,14 +488,15 @@ export default class LogicActor {
                 if (serverReservation?.telegramUserId == 0 && serverReservation && serverReservation.reservetionID) {
                     let reservationId = serverReservation.reservetionID
                     await this.vpnDB.withConnection(this.log, async con => {
-                        serverReservation = await this.serverReservationRepo.addUserReservation(con, userData.telegramUserId, reservationId)
+                        await this.serverReservationRepo.addUserReservation(con, userData.telegramUserId, reservationId)
+
                     })
                     doNextReservation = true
 
                     user.currentScene = {
                         tpe: "ReservationNow",
                         messageId: payload.messageId,
-                        myReservation: reservation
+                        myReservation1: reservation
                     }
                 }
                 else {
@@ -519,8 +520,20 @@ export default class LogicActor {
                         if (nextReservation.reservetionID) {
                             let nextReservationId = nextReservation.reservetionID
                             await this.vpnDB.withConnection(this.log, async con => {
-                                serverReservation = await this.serverReservationRepo.addUserReservation(con, userData.telegramUserId, nextReservationId)
+                                await this.serverReservationRepo.addUserReservation(con, userData.telegramUserId, nextReservationId)
+                                serverReservation = await this.serverReservationRepo.selectReservationById(con, nextReservationId)
                             })
+                            if (serverReservation) {
+                                user.currentScene = {
+                                    tpe: "ReservationNow",
+                                    messageId: payload.messageId,
+                                    myReservation1: reservation,
+                                    myReservation2: {
+                                        reservationDate: serverReservation?.reservationDate,
+                                        reservationTime: serverReservation?.reservationTime
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -854,7 +867,6 @@ export default class LogicActor {
             if (Number(hours) - Number(intervalStart) == 1) {
                 reservationDouble = true
             }
-            console.log(reservationDouble)
 
             let intervalEnd = intervalStart + 2;
             if (intervalStart == 22) {

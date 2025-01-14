@@ -52,15 +52,15 @@ export class VpnL10nRu implements VpnL10n {
     }
     addMyReservationInfo(reservation1: ServerReservation | undefined, reservation2: ServerReservation | undefined) {
         if (!reservation1) {
-            return "Мои бронирование: отсутствует"
+            return "Мои бронирование: отсутствуют"
         }
-        else if(!reservation2) {
+        else if (!reservation2) {
             return `Мое бронирование: ${reservation1.reservationDate} ${reservation1.reservationTime}`
         }
         else {
             return `Мои бронирования: \n` +
-            `1) ${reservation1.reservationDate} ${reservation1.reservationTime} \n` +
-            `2) ${reservation2.reservationDate} ${reservation2.reservationTime}`
+                `1) ${reservation1.reservationDate} ${reservation1.reservationTime} \n` +
+                `2) ${reservation2.reservationDate} ${reservation2.reservationTime}`
         }
     }
 
@@ -129,7 +129,14 @@ export class VpnL10nRu implements VpnL10n {
     }
 
     reservationNow(scene: s.ReservationNow): string {
-        return (`Сервер успешно забронирован. Дата: ${scene.myReservation?.reservationDate} Время: ${scene.myReservation?.reservationTime}`)
+        if (!scene.myReservation2 && scene.myReservation1) {
+            return (`Сервер успешно забронирован. Дата: ${scene.myReservation1?.reservationDate} Время: ${scene.myReservation1?.reservationTime}`)
+        }
+        else {
+            return (`Сервер успешно забронирован на два интервала: \n` +
+                `1) ${scene.myReservation1?.reservationDate} ${scene.myReservation1?.reservationTime} \n` +
+                `2) ${scene.myReservation2?.reservationDate} ${scene.myReservation2?.reservationTime} `)
+        }
     }
 
     deleteMyReservation(scene: s.DeleteMyReservation): string {

@@ -25,7 +25,8 @@ export type DeleteMassage = {
 export type ReservationNow = {
   tpe: 'ReservationNow',
   messageId?: number,
-  myReservation?: ServerReservation
+  myReservation1?: ServerReservation,
+  myReservation2?: ServerReservation
 }
 
 export type ReservationByDate = {
