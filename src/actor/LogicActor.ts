@@ -594,7 +594,7 @@ export default class LogicActor {
             }
 
             case 'ReservationByTime': {
-                let timeSlots:string[] = []
+                let timeSlots: string[] = []
                 let dataForTimeSlots = markupDataParseActionInScene(payload.data)
                 const moscowOffset = 3 * 60
                 const now = new Date();
@@ -616,7 +616,7 @@ export default class LogicActor {
                     reservations = await this.serverReservationRepo.selectLastDaysReservations(con, reservationId)
                     if (reservations?.length) {
                         for (let i = reservations?.length - 1; i >= 0; i--) {
-                            if(reservations[i].reservationDate == dataForTimeSlots && reservations[i].telegramUserId == 0) {
+                            if (reservations[i].reservationDate == dataForTimeSlots && reservations[i].telegramUserId == 0) {
                                 timeSlots.push(reservations[i].reservationTime)
                             }
                         }
@@ -628,6 +628,44 @@ export default class LogicActor {
                     messageId: payload.messageId,
                     timeSlots: timeSlots,
                     dateSlot: markupDataParseActionInScene(payload.data)
+                }
+                break
+            }
+
+            case 'ConfermReservation': {
+                const reservationTime = markupDataParseActionInScene(payload.data).split("|")[0]
+                const reservationDate = markupDataParseActionInScene(payload.data).split("|")[1]
+
+                const reservation = {
+                    reservationDate: reservationDate,
+                    reservationTime: reservationTime
+                }
+
+                let serverReservation: ServerReservation | undefined
+
+                await this.vpnDB.withConnection(this.log, async con => {
+                    serverReservation = await this.serverReservationRepo.selectReservationBy(con, reservationDate, reservationTime)
+                })
+
+                if (serverReservation?.telegramUserId == 0 && serverReservation && serverReservation.reservetionID) {
+                    let reservationId = serverReservation.reservetionID
+                    await this.vpnDB.withConnection(this.log, async con => {
+                        serverReservation = await this.serverReservationRepo.addUserReservation(con, userData.telegramUserId, reservationId)
+                    })
+
+                    user.currentScene = {
+                        tpe: "ConfermReservation",
+                        messageId: payload.messageId,
+                        dateSlot: reservationDate,
+                        timeSlot: reservationTime
+                    }
+
+                }
+                else {
+                    user.currentScene = {
+                        tpe: "ServerBlock",
+                        messageId: payload.messageId
+                    }
                 }
                 break
             }

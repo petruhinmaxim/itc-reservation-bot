@@ -34,9 +34,12 @@ export function getMarkup(scene: s.Scene, l10n: VpnL10n):
     case "ReservationByTime":
       if (scene.tpe == "ReservationByTime") {
         for (let i = 0; i < scene.timeSlots.length; i++) {
-          buttons.push([getTime(l10n, scene, scene.timeSlots[i])]) 
+          buttons.push([getTimeSlots(l10n, scene, scene.timeSlots[i])])
         }
       }
+      buttons.push([getStartButton(l10n)])
+      break
+    case "ConfermReservation":
       buttons.push([getStartButton(l10n)])
       break
     case "IphoneInstruction":
@@ -139,16 +142,14 @@ function getDateSlot3(l10n: VpnL10n, scene: s.Scene) {
   }
 }
 
-function getTime(l10n: VpnL10n, scene: s.Scene, timeSlot: string) {
+function getTimeSlots(l10n: VpnL10n, scene: s.Scene, timeSlot: string) {
   if (scene.tpe == "ReservationByTime") {
-    return Markup.button.callback(l10n.goToTime(scene, timeSlot), markupDataGen('ReservationByTime', timeSlot + "|" +scene.dateSlot ))
+    return Markup.button.callback(l10n.goToTime(scene, timeSlot), markupDataGen('ConfermReservation', timeSlot + "|" + scene.dateSlot))
   }
   else {
     return Markup.button.callback(l10n.goToMainMenu(), markupDataGen('Start'))
   }
 }
-
-
 
 function markupDataGen(sceneTpe: string, actionInScene?: string) {
   return sceneTpe + '_' + actionInScene

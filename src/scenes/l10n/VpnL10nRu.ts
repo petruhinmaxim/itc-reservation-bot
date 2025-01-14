@@ -113,7 +113,7 @@ export class VpnL10nRu implements VpnL10n {
             '2) После окончания триального периода доступ возобновляется при генерации 300+$ рейка в месяц на афф направление и для всех игроков бекинкового фонда ITC \n \n' +
             'Инструкция: \n' +
             '1) Для подключения к серверу используйте программу: ССЫЛКА \n' +
-            '2) За 5 минут до времени бронирования вам придет сообщение с адресом сервера, логином и паролем \n' +
+            '2) За 5 минут до начала бронирования вам придет сообщение с адресом сервера, логином и паролем \n' +
             '3) Не забывайте закрыть все запущенные программы после завершения тренировки \n' +
             '4) За 5 минут до окончания брони вы получите сообщение. Просьба, не занимайте сервер после окончания времени бронирования \n \n' +
             '5) Если заканчиваете работу с сервером до окончания времени бронирования, нажмите, пожалуйста кнопку "Отменить бронирование"\n \n' +
@@ -154,6 +154,10 @@ export class VpnL10nRu implements VpnL10n {
         }
         return `Привет, ${userName}.\n` +
             scene.text
+    }
+
+    confermReservation(scene: s.ConfermReservation): string {
+        return (`Сервер успешно забронирован на ${scene.dateSlot} ${scene.timeSlot}`)
     }
 
     //navigation
@@ -322,6 +326,9 @@ export class VpnL10nRu implements VpnL10n {
                 break
             case "ReservationByTime":
                 text = this.reservationByTime(scene)
+                break
+            case "ConfermReservation":
+                text = this.confermReservation(scene)
                 break
         }
         return text
