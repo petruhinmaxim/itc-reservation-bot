@@ -14,6 +14,11 @@ export interface ServerReservationRepository {
         reservationTime:string
     ): Promise<ServerReservation | undefined>
 
+    selectReservationById(
+        connection: VpnDBConnection,
+        reservationId: number,
+    ): Promise<ServerReservation | undefined>
+
     selectLastReservation(
         connection: VpnDBConnection
     ): Promise<ServerReservation | undefined>
@@ -74,6 +79,17 @@ class ServerReservationRepositoryImpl implements ServerReservationRepository {
             await this.clientLocator.ensureClient(connection),
             reservationDate,
             reservationTime
+        )
+    }
+
+    async selectReservationById(
+        connection: VpnDBConnection,
+        reservationId: number
+    ): Promise<ServerReservation | undefined> {
+        return sql.selectReservationById(
+            await this.clientLocator.ensureClient(connection),
+            reservationId
+            
         )
     }
 
@@ -174,6 +190,20 @@ namespace sql {
              WHERE reservation_date = $1
                 AND reservation_time = $2`,
             [reservationDate, reservationTime]
+        )
+        return res.rows.map(serverReservationRowMapping).shift()
+    }
+
+    export async function selectReservationById(
+        client: ClientBase,
+        reservationDateId: number
+    ): Promise<ServerReservation | undefined> {
+        const res = await client.query(
+            `SELECT *
+             FROM server_reservation
+             WHERE id = $1
+            `,
+            [reservationDateId]
         )
         return res.rows.map(serverReservationRowMapping).shift()
     }

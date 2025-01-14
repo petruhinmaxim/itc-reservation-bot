@@ -406,7 +406,7 @@ export default class LogicActor {
                 const dayTodat = String(moscowTime.getDate()).padStart(2, '0');
                 const monthToday = String(moscowTime.getMonth() + 1).padStart(2, '0');
                 let dateToday = `${dayTodat}.${monthToday}`;
-                const intervalTyme = getTimeInterval()
+                const intervalTyme = getTimeInterval().interval
                 let serverReservation: ServerReservation | undefined
                 let serverStatus = false
 
@@ -469,7 +469,9 @@ export default class LogicActor {
                 const monthToday = String(moscowTime.getMonth() + 1).padStart(2, '0');
                 let dateToday = `${dayTodat}.${monthToday}`;
 
-                const intervalTyme = getTimeInterval()
+                const intervalTyme = getTimeInterval().interval
+                const reservationDouble = getTimeInterval().reservationDouble
+
 
                 const reservation = {
                     reservationDate: dateToday,
@@ -477,6 +479,7 @@ export default class LogicActor {
                 }
 
                 let serverReservation: ServerReservation | undefined
+                let doNextReservation: boolean = false
 
                 await this.vpnDB.withConnection(this.log, async con => {
                     serverReservation = await this.serverReservationRepo.selectReservationBy(con, dateToday, intervalTyme)
@@ -487,6 +490,7 @@ export default class LogicActor {
                     await this.vpnDB.withConnection(this.log, async con => {
                         serverReservation = await this.serverReservationRepo.addUserReservation(con, userData.telegramUserId, reservationId)
                     })
+                    doNextReservation = true
 
                     user.currentScene = {
                         tpe: "ReservationNow",
@@ -500,6 +504,26 @@ export default class LogicActor {
                         messageId: payload.messageId
                     }
                 }
+
+
+                if (reservationDouble && reservation && doNextReservation) {
+                    let serverReservation: ServerReservation | undefined
+                    let nextReservation: ServerReservation | undefined
+                    await this.vpnDB.withConnection(this.log, async con => {
+                        serverReservation = await this.serverReservationRepo.selectReservationBy(con, reservation.reservationDate, reservation.reservationTime)
+                        if (serverReservation?.reservetionID)
+                            nextReservation = await this.serverReservationRepo.selectReservationById(con, serverReservation?.reservetionID + 1)
+                    })
+
+                    if (nextReservation?.telegramUserId == 0 && nextReservation && nextReservation.reservetionID) {
+                        if (nextReservation.reservetionID) {
+                            let nextReservationId = nextReservation.reservetionID
+                            await this.vpnDB.withConnection(this.log, async con => {
+                                serverReservation = await this.serverReservationRepo.addUserReservation(con, userData.telegramUserId, nextReservationId)
+                            })
+                        }
+                    }
+                }
                 break
             }
 
@@ -511,7 +535,7 @@ export default class LogicActor {
                 const dayTodat = String(moscowTime.getDate()).padStart(2, '0');
                 const monthToday = String(moscowTime.getMonth() + 1).padStart(2, '0');
                 let dateToday = `${dayTodat}.${monthToday}`;
-                const intervalTyme = getTimeInterval()
+                const intervalTyme = getTimeInterval().interval
                 let serverReservation: ServerReservation | undefined
                 await this.vpnDB.withConnection(this.log, async con => {
                     serverReservation = await this.serverReservationRepo.selectReservationBy(con, dateToday, intervalTyme)
@@ -555,7 +579,7 @@ export default class LogicActor {
                 const dayTodat = String(moscowTime.getDate()).padStart(2, '0');
                 const monthToday = String(moscowTime.getMonth() + 1).padStart(2, '0');
                 let dateToday = `${dayTodat}.${monthToday}`;
-                const intervalTyme = getTimeInterval()
+                const intervalTyme = getTimeInterval().interval
                 let serverReservation: ServerReservation | undefined
                 await this.vpnDB.withConnection(this.log, async con => {
                     serverReservation = await this.serverReservationRepo.selectReservationBy(con, dateToday, intervalTyme)
@@ -609,7 +633,7 @@ export default class LogicActor {
                 const dayTodat = String(moscowTime.getDate()).padStart(2, '0');
                 const monthToday = String(moscowTime.getMonth() + 1).padStart(2, '0');
                 let dateToday = `${dayTodat}.${monthToday}`;
-                const intervalTyme = getTimeInterval()
+                const intervalTyme = getTimeInterval().interval
                 let serverReservation: ServerReservation | undefined
                 await this.vpnDB.withConnection(this.log, async con => {
                     serverReservation = await this.serverReservationRepo.selectReservationBy(con, dateToday, intervalTyme)
@@ -820,18 +844,24 @@ export default class LogicActor {
         await this.vpnUserRepo.upsertVpnUser(con, user)
         await this.sendToUser(user, out)
 
-        function getTimeInterval() {
+        function getTimeInterval(): { interval: string; reservationDouble: boolean; } {
             const now = new Date();
+            let reservationDouble: boolean = false
             const moscowOffset = 3 * 60; // Смещение Москвы от UTC в минутах (UTC+3)
             const localTime = new Date(now.getTime() + now.getTimezoneOffset() * 60000 + moscowOffset * 60000);
             const hours = localTime.getHours()
             const intervalStart = Math.floor(hours / 2) * 2;
+            if (Number(hours) - Number(intervalStart) == 1) {
+                reservationDouble = true
+            }
+            console.log(reservationDouble)
+
             let intervalEnd = intervalStart + 2;
             if (intervalStart == 22) {
                 intervalEnd = 0;
             }
             let interval = `${String(intervalStart).padStart(2, '0')}:00 - ${String(intervalEnd).padStart(2, '0')}:00 МСК`;
-            return interval
+            return { interval, reservationDouble }
         }
     }
 
