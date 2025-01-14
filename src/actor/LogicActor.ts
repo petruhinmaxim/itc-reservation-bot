@@ -4,7 +4,7 @@ import * as tg from '../model/telegram-massege-types'
 import {
     ServerReservation,
     TelegramUserData,
-    telegramUserEquals, UserAction,
+    telegramUserEquals, UserAccess, UserAction,
     UserConfigs,
     UserFeedback,
     VpnConfig,
@@ -20,6 +20,7 @@ import { OutputPayload } from "../model/telegram-massege-types"
 import { makeUserFeedbackRepository, UserFeedbackRepository } from "../db/repository/UserFeedbackRepository";
 import { makeUserActionRepository, UserActionRepository } from "../db/repository/UserActionRepository";
 import { makeServerReservationRepository, ServerReservationRepository } from '../db/repository/ServerReservationRepository'
+import { makeUserAccessRepository, UserAccessRepository } from '../db/repository/UserAccessRepository'
 
 export default class LogicActor {
     private readonly vpnDB: VpnDB
@@ -32,6 +33,7 @@ export default class LogicActor {
     private userFeedbackRepo!: UserFeedbackRepository
     private userActionRepo!: UserActionRepository
     private serverReservationRepo!: ServerReservationRepository
+    private userAccessRepo!: UserAccessRepository
 
     static inject() {
         return ['VpnDBResource']
@@ -51,6 +53,7 @@ export default class LogicActor {
         this.userFeedbackRepo = makeUserFeedbackRepository(this.vpnDB)
         this.userActionRepo = makeUserActionRepository(this.vpnDB)
         this.serverReservationRepo = makeServerReservationRepository(this.vpnDB)
+        this.userAccessRepo = makeUserAccessRepository(this.vpnDB)
         this.log.info('init')
 
         async () => {
@@ -378,6 +381,7 @@ export default class LogicActor {
             this.log, async con => {
                 return await this.ensureUser(con, msg.telegramUser)
             })
+            //TODO проверка доступа. Пока костыльно
 
         await this.vpnDB.withConnection(this.log, async con => {
             switch (msg.inputPayload.tpe) {
@@ -539,6 +543,7 @@ export default class LogicActor {
                         }
                     }
                 }
+                // ___________________TODODOODODOD
                 break
             }
 
@@ -619,14 +624,12 @@ export default class LogicActor {
                             }
                             if (!dateSlot3 && dateSlot1 != reservations[i].reservationDate && dateSlot2 != reservations[i].reservationDate) {
                                 dateSlot3 = reservations[i].reservationDate
-                                console.log(reservations[i].reservationDate)
                                 break
                             }
 
                         }
                     }
                 })
-                //тут заполнение по 3-м ближайшим датам, включая сегодня
 
                 user.currentScene = {
                     tpe: "ReservationByDate",
@@ -712,6 +715,17 @@ export default class LogicActor {
                         messageId: payload.messageId
                     }
                 }
+                //checkUserAccess
+                await this.vpnDB.withConnection(this.log, async con => {
+                    let userAccess = await this.userAccessRepo.selectUserAccessByTelegramId(con, userData.telegramUserId)
+                    if(!userAccess) {
+                        const userAccess: UserAccess ={
+                            telegramUserId: userData.telegramUserId,
+                            startTrialTime: new Date()
+                        }
+                        await this.userAccessRepo.insertUserAccess(con, userAccess)
+                    }
+                })
                 break
             }
 

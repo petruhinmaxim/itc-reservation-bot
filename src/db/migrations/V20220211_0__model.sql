@@ -10,7 +10,7 @@ CREATE INDEX IF NOT EXISTS telegram_user_data_telegram_user_id_idx ON telegram_u
 
 CREATE TABLE IF NOT EXISTS user_server_access (
    telegram_user_id BIGSERIAL NOT NULL REFERENCES telegram_user_data(telegram_user_id),
-   start_trial_date_id TIMESTAMP WITH TIME ZONE,
+   start_trial TIMESTAMP WITH TIME ZONE,
    user_access BOOLEAN
 );
 
