@@ -36,5 +36,7 @@ CREATE TABLE IF NOT EXISTS server_reservation (
    reservation_date TEXT NOT NULL,
    reservation_time TEXT NOT NULL,
    telegram_user_id BIGSERIAL,
-   old_reservation BIGSERIAL
+   old_reservation BIGSERIAL,
+   send_start_notification BOOLEAN,
+   send_end_notification BOOLEAN
 );

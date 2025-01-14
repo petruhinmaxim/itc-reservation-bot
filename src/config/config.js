@@ -13,6 +13,11 @@ const config = {
     telegram: {
         mainToken: process.env.CNFT_TELEGRAM_MAIN_TOKEN,
         adminToken: process.env.CNFT_TELEGRAM_ADMIN_TOKEN
+    },
+    server: {
+        ip: "",
+        login: "",
+        pass: ""
     }
 }
 

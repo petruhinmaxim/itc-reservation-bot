@@ -2,6 +2,8 @@ import { VpnL10n } from "./VpnL10n"
 import * as s from "../../model/scene-types"
 import { escapeString } from "../text-util";
 import { ServerReservation } from "../../model/vpn-user-types";
+import config from "../../config/config";
+
 
 export class VpnL10nRu implements VpnL10n {
 
@@ -50,18 +52,28 @@ export class VpnL10nRu implements VpnL10n {
                 this.addMyReservationInfo(scene.myReservation1, scene.myReservation2)
         }
     }
+
     addMyReservationInfo(reservation1: ServerReservation | undefined, reservation2: ServerReservation | undefined) {
         if (!reservation1) {
             return "Мои бронирование: отсутствуют"
         }
         else if (!reservation2) {
-            return `Мое бронирование: ${reservation1.reservationDate} ${reservation1.reservationTime}`
+            return `Мое бронирование: ${reservation1.reservationDate} ${reservation1.reservationTime} \n \n` +
+            `Данные для подключения: \n` +
+            `IP сервера: ${config.server.ip} \n` +
+            `Логин: ${config.server.login} Пароль: ` + this.getPass()
         }
         else {
-            return `Мои бронирования: \n` +
+            return `Мои ближайшие бронирования: \n` +
                 `1) ${reservation1.reservationDate} ${reservation1.reservationTime} \n` +
-                `2) ${reservation2.reservationDate} ${reservation2.reservationTime}`
+                `2) ${reservation2.reservationDate} ${reservation2.reservationTime}\n \n` +
+            `Данные для подключения: \n` +
+            `IP сервера: ${config.server.ip} \n` +
+            `Логин: ${config.server.login} Пароль: ` + this.getPass()
         }
+    }
+    getPass(){
+        return escapeString(config.server.pass).replace("\\","").replace("\\","").replace("\\","")
     }
 
     iphoneInstruction(scene: s.IphoneInstruction): string {
@@ -114,13 +126,14 @@ export class VpnL10nRu implements VpnL10n {
     instruction(scene: s.Instruction): string {
         return (`Доступ: \n` +
             '1) Тестовый доступ к серверу предоставляется на 2 недели \n' +
-            '2) После окончания триального периода доступ возобновляется при генерации 300+$ рейка в месяц на афф направление и для всех игроков бекинкового фонда ITC \n \n' +
+            '2) После окончания триального периода доступ возобновляется при генерации 300+$ рейка в месяц на афф направление и для всех игроков бекинкового фонда ITC \n' +
+            `3) Данные для подключения появятся в приветственном сообщение после успешного бронирования. Если не удается подключиться, обновите приветственное сообщение и используейте новый пароль\n \n` +
             'Инструкция: \n' +
             '1) Для подключения к серверу используйте программу: ССЫЛКА \n' +
             '2) За 5 минут до начала бронирования вам придет сообщение с адресом сервера, логином и паролем \n' +
             '3) Не забывайте закрыть все запущенные программы после завершения тренировки \n' +
             '4) За 5 минут до окончания брони вы получите сообщение. Просьба, не занимайте сервер после окончания времени бронирования \n \n' +
-            '5) Если заканчиваете работу с сервером до окончания времени бронирования, нажмите, пожалуйста кнопку "Отменить бронирование"\n \n' +
+            '5) Если заканчиваете работу с сервером до окончания времени бронирования, нажмите, пожалуйста, кнопку "Отменить бронирование"\n \n' +
             'Список установленного софта и функционал: \n' +
             '- Софт 1 + ссылка \n' +
             '- Софт 2 + ссылка'

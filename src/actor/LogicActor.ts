@@ -322,6 +322,8 @@ export default class LogicActor {
         }
     }
 
+
+
     private async ensureUser(
         con: VpnDBConnection,
         telegramUserData: TelegramUserData
