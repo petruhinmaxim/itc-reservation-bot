@@ -15,7 +15,6 @@ export class VpnL10nRu implements VpnL10n {
         let tyme: string | undefined
         let myReservationDate: string | undefined
         let myReservationTime: string | undefined
-        console.log("Моя бронь" + scene.myReservation)
 
         if (scene.serverStatus) {
             status = "забронирован до"
@@ -32,7 +31,7 @@ export class VpnL10nRu implements VpnL10n {
                 `Обрати внимание, что работа ведется по московскому времени, а интервал бронирования равен двум часам \n` +
                 `Не забудь ознакомиться с инструкцией и правилами работы на сервере \n \n` +
                 `Статус сервера: ${status} ${date} ${tyme} МСК \n` +
-                this.addMyReservationInfo(scene.myReservation)
+                this.addMyReservationInfo(scene.myReservation1, scene.myReservation2)
         }
         else if (date) {
             return `Привет, ${userName}.\n` +
@@ -40,7 +39,7 @@ export class VpnL10nRu implements VpnL10n {
                 `Обрати внимание, что работа ведется по московскому времени, а интервал бронирования равен двум часам \n` +
                 `Не забудь ознакомиться с инструкцией и правилами работы на сервере \n \n` +
                 `Статус сервера: ${status} до ${date} ${tyme} МСК \n` +
-                this.addMyReservationInfo(scene.myReservation)
+                this.addMyReservationInfo(scene.myReservation1, scene.myReservation2)
         }
         else {
             return `Привет, ${userName}.\n` +
@@ -48,15 +47,20 @@ export class VpnL10nRu implements VpnL10n {
                 `Обрати внимание, что работа ведется по московскому времени, а интервал бронирования равен двум часам \n` +
                 `Не забудь ознакомиться с инструкцией и правилами работы на сервере \n \n` +
                 `Статус сервера: ${status}  \n` +
-                this.addMyReservationInfo(scene.myReservation)
+                this.addMyReservationInfo(scene.myReservation1, scene.myReservation2)
         }
     }
-    addMyReservationInfo(reservation: ServerReservation | undefined) {
-        if (!reservation) {
-            return "Мое бронирование: отсутствует"
+    addMyReservationInfo(reservation1: ServerReservation | undefined, reservation2: ServerReservation | undefined) {
+        if (!reservation1) {
+            return "Мои бронирование: отсутствует"
+        }
+        else if(!reservation2) {
+            return `Мое бронирование: ${reservation1.reservationDate} ${reservation1.reservationTime}`
         }
         else {
-            return `Мое бронирование: ${reservation.reservationDate} ${reservation.reservationTime}`
+            return `Мои бронирования: \n` +
+            `1) ${reservation1.reservationDate} ${reservation1.reservationTime} \n` +
+            `2) ${reservation2.reservationDate} ${reservation2.reservationTime}`
         }
     }
 

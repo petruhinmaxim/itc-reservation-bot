@@ -10,7 +10,8 @@ export type Start = {
   tpe: 'Start'
   messageId?: number
   userName?: string
-  myReservation?: ServerReservation
+  myReservation1?: ServerReservation
+  myReservation2?: ServerReservation
   lustActiveReservation?: ServerReservation
   lastEamptyReservation?: ServerReservation
   serverStatus?: boolean

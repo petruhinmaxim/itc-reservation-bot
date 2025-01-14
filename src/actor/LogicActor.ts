@@ -422,7 +422,8 @@ export default class LogicActor {
                 if (serverReservation?.reservetionID) reservationId = serverReservation.reservetionID
                 let lastActiveReservation: ServerReservation | undefined
                 let lastEamptyReservation: ServerReservation | undefined
-                let myReservation: ServerReservation | undefined
+                let myReservation1: ServerReservation | undefined
+                let myReservation2: ServerReservation | undefined
 
                 await this.vpnDB.withConnection(this.log, async con => {
                     reservations = await this.serverReservationRepo.selectLastDaysReservations(con, reservationId)
@@ -436,7 +437,12 @@ export default class LogicActor {
                                 lastActiveReservation = reservations[i]
                             }
                             if (reservations[i].telegramUserId == userData.telegramUserId) {
-                                myReservation = reservations[i]
+                                if (reservations[i].telegramUserId == userData.telegramUserId && !myReservation2 && myReservation1) {
+                                    myReservation2 = reservations[i]
+                                }
+                                if (!myReservation1) {
+                                    myReservation1 = reservations[i]
+                                }
                             }
                         }
                     }
@@ -449,7 +455,8 @@ export default class LogicActor {
                     serverStatus: serverStatus,
                     lastEamptyReservation: lastEamptyReservation,
                     lustActiveReservation: lastActiveReservation,
-                    myReservation: myReservation
+                    myReservation1: myReservation1,
+                    myReservation2: myReservation2
                 }
                 break
             }
@@ -486,7 +493,6 @@ export default class LogicActor {
                         messageId: payload.messageId,
                         myReservation: reservation
                     }
-
                 }
                 else {
                     user.currentScene = {
@@ -903,7 +909,8 @@ export default class LogicActor {
                 if (serverReservation?.reservetionID) reservationId = serverReservation.reservetionID
                 let lastActiveReservation: ServerReservation | undefined
                 let lastEamptyReservation: ServerReservation | undefined
-                let myReservation: ServerReservation | undefined
+                let myReservation1: ServerReservation | undefined
+                let myReservation2: ServerReservation | undefined
 
                 await this.vpnDB.withConnection(this.log, async con => {
                     reservations = await this.serverReservationRepo.selectLastDaysReservations(con, reservationId)
@@ -917,8 +924,15 @@ export default class LogicActor {
                                 lastActiveReservation = reservations[i]
                             }
                             if (reservations[i].telegramUserId == userData.telegramUserId) {
-                                myReservation = reservations[i]
+                                if (reservations[i].telegramUserId == userData.telegramUserId && !myReservation2 && myReservation1) {
+                                    myReservation2 = reservations[i]
+                                }
+                                if (!myReservation1) {
+                                    myReservation1 = reservations[i]
+                                }
                             }
+
+
                         }
                     }
                 })
@@ -930,7 +944,8 @@ export default class LogicActor {
                     serverStatus: serverStatus,
                     lastEamptyReservation: lastEamptyReservation,
                     lustActiveReservation: lastActiveReservation,
-                    myReservation: myReservation
+                    myReservation1: myReservation1,
+                    myReservation2: myReservation2
                 }
 
 
