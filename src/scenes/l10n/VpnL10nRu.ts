@@ -182,7 +182,7 @@ export class VpnL10nRu implements VpnL10n {
     //navigation
     goToMainMenu(): string {
         return escapeString(
-            `<< приветсвенное меню`
+            `<< приветственное меню`
         )
     }
 
