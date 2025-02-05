@@ -351,13 +351,15 @@ export default class LogicActor {
                     currentScene: { tpe: "Start" }
                 }
             }
-        }
+
         const userAction: UserAction = {
             telegramUserId: telegramUserData.telegramUserId,
             actionAt: new Date(),
             scene: vpnUser.currentScene.tpe
         }
+
         await this.userActionRepo.insertAction(con, userAction)
+    }
         return vpnUser
     }
 
@@ -401,7 +403,8 @@ export default class LogicActor {
         userData: TelegramUserData,
         payload: tg.CallbackInput
     ) {
-        const sceneTpeInCallbackData = markupDataParseSceneTpe(payload.data)
+        let sceneTpeInCallbackData = markupDataParseSceneTpe(payload.data)
+        let userAcces = await this.userAccessRepo.selectUserAccessByTelegramId(con, user.telegramUserId)
         switch (sceneTpeInCallbackData) {
             case 'Start': {
                 //TODO получение информации о статусе сервера и времени бронирования
@@ -715,17 +718,25 @@ export default class LogicActor {
                         messageId: payload.messageId
                     }
                 }
-                //checkUserAccess
                 await this.vpnDB.withConnection(this.log, async con => {
                     let userAccess = await this.userAccessRepo.selectUserAccessByTelegramId(con, userData.telegramUserId)
                     if(!userAccess) {
                         const userAccess: UserAccess ={
                             telegramUserId: userData.telegramUserId,
-                            startTrialTime: new Date()
+                            startTrialTime: new Date(),
+                            userAccess: true
                         }
                         await this.userAccessRepo.insertUserAccess(con, userAccess)
                     }
                 })
+                break
+            }
+
+            case 'BlockAccess': {
+                user.currentScene = {
+                    tpe: "Instruction",
+                    messageId: payload.messageId
+                }
                 break
             }
 
@@ -857,6 +868,13 @@ export default class LogicActor {
                 }
                 break
             }
+        }
+
+        if(userAcces?.userAccess == false) {
+                user.currentScene = {
+                    tpe: "BlockAccess",
+                    messageId: payload.messageId
+                }
         }
         let out: tg.OutputPayload
         if (sceneTpeInCallbackData == "GetConfigs") {

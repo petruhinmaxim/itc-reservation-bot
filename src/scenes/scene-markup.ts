@@ -44,6 +44,9 @@ export function getMarkup(scene: s.Scene, l10n: VpnL10n):
     case "ConfermReservation":
       buttons.push([getStartButton(l10n)])
       break
+    case "BlockAccess":
+      buttons.push([getStartButton(l10n)])
+      break
     case "IphoneInstruction":
       buttons.push([getStartButton(l10n)])
       break

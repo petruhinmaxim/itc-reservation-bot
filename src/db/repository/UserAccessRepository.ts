@@ -64,12 +64,13 @@ namespace sql {
         userAccess: UserAccess
     ): Promise<UserAccess> {
         const { telegramUserId, startTrialTime } = userAccess
+        let access = true
         await client.query(
             `
-                INSERT INTO user_server_access (telegram_user_id, start_trial)
-                VALUES ($1, $2)
+                INSERT INTO user_server_access (telegram_user_id, start_trial, user_access)
+                VALUES ($1, $2, $3)
             `,
-            [telegramUserId, startTrialTime]
+            [telegramUserId, startTrialTime, access]
         )
         return {
             telegramUserId: telegramUserId,

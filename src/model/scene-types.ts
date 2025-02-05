@@ -4,7 +4,7 @@ export type Scene =
   Start | DeleteMassage | IphoneInstruction | MacInstruction |
   AndroidInstruction | WindowsInstruction | GetConfigs | GeneralInfo |
   SendMassageToUser | Feedback | Instruction | ReservationNow | ReservationByDate | 
-  ReservationByTime | ServerBlock | DeleteMyReservation | ConfermReservation
+  ReservationByTime | ServerBlock | DeleteMyReservation | ConfermReservation | BlockAccess
 
 export type Start = {
   tpe: 'Start'
@@ -119,3 +119,9 @@ export type Feedback = {
   tpe: 'Feedback'
   messageId?: number
 }
+
+export type BlockAccess = {
+  tpe: 'BlockAccess'
+  messageId?: number
+}
+

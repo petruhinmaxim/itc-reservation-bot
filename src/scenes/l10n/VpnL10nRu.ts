@@ -53,6 +53,10 @@ export class VpnL10nRu implements VpnL10n {
         }
     }
 
+    blockAccess():string {
+        return "Доспуп к бронированию сервера закрыт. Для восстановления напишите, пожалуйста, поддержке"
+    }
+
     addMyReservationInfo(reservation1: ServerReservation | undefined, reservation2: ServerReservation | undefined) {
         if (!reservation1) {
             return "Мои бронирование: отсутствуют"
@@ -72,6 +76,8 @@ export class VpnL10nRu implements VpnL10n {
             `Логин: ${config.server.login} Пароль: ` + this.getPass()
         }
     }
+
+
     getPass(){
         return escapeString(config.server.pass).replace("\\","").replace("\\","").replace("\\","")
     }
@@ -302,6 +308,7 @@ export class VpnL10nRu implements VpnL10n {
 
 
     getText(scene: s.Scene): string {
+        console.log(scene.tpe)
         let text = ``
         switch (scene.tpe) {
             case `Start`:
@@ -348,6 +355,9 @@ export class VpnL10nRu implements VpnL10n {
                 break
             case "ConfermReservation":
                 text = this.confermReservation(scene)
+                break
+            case "BlockAccess":
+                text = this.blockAccess()
                 break
         }
         return text
