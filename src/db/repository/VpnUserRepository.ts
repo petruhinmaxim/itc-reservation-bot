@@ -58,7 +58,7 @@ namespace sql {
   export async function upsertVpnUser(
       client: ClientBase,
       vpnUser: VpnUser
-  ): Promise<number> {
+  ): Promise<number > {
     const { telegramUserId, currentScene } = vpnUser
     const res = await client.query(
         `
@@ -69,7 +69,10 @@ namespace sql {
       `,
         [telegramUserId, currentScene]
     )
+    if(res.rowCount == null) {return 1}
+    else {
     return res.rowCount
+    }
   }
 
   export async function selectVpnUserByUserId(
