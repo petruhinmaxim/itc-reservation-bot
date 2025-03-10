@@ -59,7 +59,7 @@ export class VpnL10nRu implements VpnL10n {
 
     addMyReservationInfo(reservation1: ServerReservation | undefined, reservation2: ServerReservation | undefined) {
         if (!reservation1) {
-            return "Мои бронирование: отсутствуют"
+            return "Мои бронирования: отсутствуют"
         }
         else if (!reservation2) {
             return `Мое бронирование: ${reservation1.reservationDate} ${reservation1.reservationTime} \n \n` +
